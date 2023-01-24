@@ -1,0 +1,975 @@
+>>SEED: 2020
+[0;30;43mloading [../data/yelp2018][0m
+******* #users: 31668, #items: 38048
+1237259 interactions for training
+324147 interactions for testing
+yelp2018 Sparsity : 0.0012958757851778647
+yelp2018 is ready to go
+===========config================
+{'A_n_fold': 100,
+ 'A_split': False,
+ 'FN': 0,
+ 'FP': 0,
+ 'act_vae': Tanh(),
+ 'alpha_model2': 5.0,
+ 'bigdata': False,
+ 'bpr_batch_size': 2048,
+ 'decay': 0.0001,
+ 'decoder_ctrl_model3': 0,
+ 'dropout': 0,
+ 'dropout_model2': 0.5,
+ 'enc_dims': '[64]',
+ 'encoder_ctrl_model3': 2,
+ 'keep_prob': 0.6,
+ 'kernel': 'gram',
+ 'kl_anneal': 0.2,
+ 'latent_dim_mymodel': 64,
+ 'latent_dim_rec': 64,
+ 'lightGCN_n_layers': 3,
+ 'lr': 0.001,
+ 'multicore': 0,
+ 'normalize_model2': 1,
+ 'pretrain': 0,
+ 'tau_model2': 0.1,
+ 'test_u_batch_size': 100,
+ 'topK': -1,
+ 'topK_model3': 10,
+ 'vae_batch_size': 64,
+ 'vae_lr': 0.001,
+ 'vae_reg_param': 0.001,
+ 'weight_scale': 80}
+cores for test: 24
+tensorboard: 0
+LOAD: 0
+Weight path: ./checkpoints
+Test Topks: [20]
+===========end===================
+0
+os.path.join(world.FILE_PATH,file): /home/hugh/code/AK_VAE/Others/checkpoints/VAEKernel-yelp2018-Tau0.1-alpha5.0-drop0.5-lr0.001-reg0.001-FP0-FN0-WScale80.pth.tar
+load and save to /home/hugh/code/AK_VAE/Others/checkpoints/VAEKernel-yelp2018-Tau0.1-alpha5.0-drop0.5-lr0.001-reg0.001-FP0-FN0-WScale80.pth.tar
+[0;30;43mnot enable tensorflowboard[0m
+log_likelihood_O: 210.8008, log_likelihood_I: 0.0000, anneal_ph *KL: 0.6318, lam * reg_loss: 2.4083
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.01425098]), 'recall': array([0.02833622]), 'ndcg': array([0.02483119])}
+EPOCH[1/400] Elapsed time: 64.8 Neg_ll: 193636.66
+log_likelihood_O: 193.6824, log_likelihood_I: 0.0000, anneal_ph *KL: 2.2375, lam * reg_loss: 6.3457
+EPOCH[2/400] Elapsed time: 64.2 Neg_ll: 177512.74
+log_likelihood_O: 187.5266, log_likelihood_I: 0.0000, anneal_ph *KL: 3.8373, lam * reg_loss: 8.0880
+EPOCH[3/400] Elapsed time: 64.0 Neg_ll: 167870.08
+log_likelihood_O: 181.7134, log_likelihood_I: 0.0000, anneal_ph *KL: 5.3656, lam * reg_loss: 8.9760
+EPOCH[4/400] Elapsed time: 64.3 Neg_ll: 163434.41
+log_likelihood_O: 179.0845, log_likelihood_I: 0.0000, anneal_ph *KL: 6.8798, lam * reg_loss: 9.4652
+EPOCH[5/400] Elapsed time: 64.2 Neg_ll: 160514.19
+log_likelihood_O: 176.2605, log_likelihood_I: 0.0000, anneal_ph *KL: 8.2961, lam * reg_loss: 9.8280
+EPOCH[6/400] Elapsed time: 64.0 Neg_ll: 158276.73
+log_likelihood_O: 172.9489, log_likelihood_I: 0.0000, anneal_ph *KL: 9.8120, lam * reg_loss: 10.1428
+EPOCH[7/400] Elapsed time: 64.1 Neg_ll: 156274.63
+log_likelihood_O: 170.3746, log_likelihood_I: 0.0000, anneal_ph *KL: 11.4264, lam * reg_loss: 10.4200
+EPOCH[8/400] Elapsed time: 64.3 Neg_ll: 154363.65
+log_likelihood_O: 167.9065, log_likelihood_I: 0.0000, anneal_ph *KL: 13.1455, lam * reg_loss: 10.6745
+EPOCH[9/400] Elapsed time: 64.1 Neg_ll: 152476.20
+log_likelihood_O: 166.6340, log_likelihood_I: 0.0000, anneal_ph *KL: 14.9736, lam * reg_loss: 10.9293
+EPOCH[10/400] Elapsed time: 64.3 Neg_ll: 150493.09
+log_likelihood_O: 175.8458, log_likelihood_I: 0.0000, anneal_ph *KL: 13.7503, lam * reg_loss: 11.0110
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03094449]), 'recall': array([0.06712897]), 'ndcg': array([0.05537327])}
+EPOCH[11/400] Elapsed time: 23.6 Neg_ll: 160775.66
+log_likelihood_O: 176.4978, log_likelihood_I: 0.0000, anneal_ph *KL: 14.3836, lam * reg_loss: 11.6930
+EPOCH[12/400] Elapsed time: 23.7 Neg_ll: 158867.66
+log_likelihood_O: 174.3444, log_likelihood_I: 0.0000, anneal_ph *KL: 15.1340, lam * reg_loss: 11.8651
+EPOCH[13/400] Elapsed time: 23.8 Neg_ll: 156744.42
+log_likelihood_O: 172.2910, log_likelihood_I: 0.0000, anneal_ph *KL: 15.8116, lam * reg_loss: 11.9221
+EPOCH[14/400] Elapsed time: 23.5 Neg_ll: 155497.02
+log_likelihood_O: 170.5586, log_likelihood_I: 0.0000, anneal_ph *KL: 16.3672, lam * reg_loss: 11.9398
+EPOCH[15/400] Elapsed time: 23.7 Neg_ll: 154489.79
+log_likelihood_O: 169.1877, log_likelihood_I: 0.0000, anneal_ph *KL: 17.0702, lam * reg_loss: 11.9523
+EPOCH[16/400] Elapsed time: 23.6 Neg_ll: 153551.45
+log_likelihood_O: 166.5323, log_likelihood_I: 0.0000, anneal_ph *KL: 17.7006, lam * reg_loss: 11.9754
+EPOCH[17/400] Elapsed time: 23.6 Neg_ll: 152881.72
+log_likelihood_O: 167.2566, log_likelihood_I: 0.0000, anneal_ph *KL: 18.3276, lam * reg_loss: 11.9770
+EPOCH[18/400] Elapsed time: 23.6 Neg_ll: 152146.92
+log_likelihood_O: 165.3404, log_likelihood_I: 0.0000, anneal_ph *KL: 18.9869, lam * reg_loss: 11.9890
+EPOCH[19/400] Elapsed time: 23.8 Neg_ll: 151545.46
+log_likelihood_O: 165.5751, log_likelihood_I: 0.0000, anneal_ph *KL: 19.5913, lam * reg_loss: 11.9917
+EPOCH[20/400] Elapsed time: 23.9 Neg_ll: 150974.63
+log_likelihood_O: 164.6322, log_likelihood_I: 0.0000, anneal_ph *KL: 20.1105, lam * reg_loss: 11.9905
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03386226]), 'recall': array([0.07418931]), 'ndcg': array([0.06172553])}
+EPOCH[21/400] Elapsed time: 23.6 Neg_ll: 150358.14
+log_likelihood_O: 166.5108, log_likelihood_I: 0.0000, anneal_ph *KL: 20.2801, lam * reg_loss: 12.1835
+EPOCH[22/400] Elapsed time: 23.6 Neg_ll: 153598.01
+log_likelihood_O: 164.5762, log_likelihood_I: 0.0000, anneal_ph *KL: 20.5338, lam * reg_loss: 12.1802
+EPOCH[23/400] Elapsed time: 23.7 Neg_ll: 152085.17
+log_likelihood_O: 165.1960, log_likelihood_I: 0.0000, anneal_ph *KL: 20.8440, lam * reg_loss: 12.1273
+EPOCH[24/400] Elapsed time: 23.8 Neg_ll: 151152.36
+log_likelihood_O: 161.8023, log_likelihood_I: 0.0000, anneal_ph *KL: 21.2515, lam * reg_loss: 12.0771
+EPOCH[25/400] Elapsed time: 23.6 Neg_ll: 150311.85
+log_likelihood_O: 161.9296, log_likelihood_I: 0.0000, anneal_ph *KL: 21.6442, lam * reg_loss: 12.0295
+EPOCH[26/400] Elapsed time: 23.9 Neg_ll: 149678.08
+log_likelihood_O: 160.9883, log_likelihood_I: 0.0000, anneal_ph *KL: 22.0650, lam * reg_loss: 11.9920
+EPOCH[27/400] Elapsed time: 23.8 Neg_ll: 149154.37
+log_likelihood_O: 158.7649, log_likelihood_I: 0.0000, anneal_ph *KL: 22.4653, lam * reg_loss: 11.9618
+EPOCH[28/400] Elapsed time: 23.6 Neg_ll: 148702.37
+log_likelihood_O: 161.6753, log_likelihood_I: 0.0000, anneal_ph *KL: 22.8166, lam * reg_loss: 11.9401
+EPOCH[29/400] Elapsed time: 23.5 Neg_ll: 148263.30
+log_likelihood_O: 157.9501, log_likelihood_I: 0.0000, anneal_ph *KL: 23.1829, lam * reg_loss: 11.9167
+EPOCH[30/400] Elapsed time: 23.7 Neg_ll: 147897.01
+log_likelihood_O: 158.9931, log_likelihood_I: 0.0000, anneal_ph *KL: 23.5120, lam * reg_loss: 11.8994
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03513326]), 'recall': array([0.07731192]), 'ndcg': array([0.06404247])}
+EPOCH[31/400] Elapsed time: 23.6 Neg_ll: 147547.02
+log_likelihood_O: 164.3636, log_likelihood_I: 0.0000, anneal_ph *KL: 23.2337, lam * reg_loss: 12.0807
+EPOCH[32/400] Elapsed time: 23.6 Neg_ll: 151622.30
+log_likelihood_O: 160.6092, log_likelihood_I: 0.0000, anneal_ph *KL: 23.2356, lam * reg_loss: 12.0890
+EPOCH[33/400] Elapsed time: 23.6 Neg_ll: 150149.42
+log_likelihood_O: 160.9558, log_likelihood_I: 0.0000, anneal_ph *KL: 23.3531, lam * reg_loss: 12.0392
+EPOCH[34/400] Elapsed time: 23.6 Neg_ll: 149244.71
+log_likelihood_O: 161.6143, log_likelihood_I: 0.0000, anneal_ph *KL: 23.5726, lam * reg_loss: 11.9875
+EPOCH[35/400] Elapsed time: 23.8 Neg_ll: 148527.51
+log_likelihood_O: 158.1774, log_likelihood_I: 0.0000, anneal_ph *KL: 23.8001, lam * reg_loss: 11.9308
+EPOCH[36/400] Elapsed time: 23.6 Neg_ll: 147957.97
+log_likelihood_O: 159.0517, log_likelihood_I: 0.0000, anneal_ph *KL: 24.0458, lam * reg_loss: 11.8946
+EPOCH[37/400] Elapsed time: 23.6 Neg_ll: 147574.39
+log_likelihood_O: 159.6267, log_likelihood_I: 0.0000, anneal_ph *KL: 24.2428, lam * reg_loss: 11.8528
+EPOCH[38/400] Elapsed time: 23.3 Neg_ll: 147164.20
+log_likelihood_O: 159.7146, log_likelihood_I: 0.0000, anneal_ph *KL: 24.5033, lam * reg_loss: 11.8402
+EPOCH[39/400] Elapsed time: 23.5 Neg_ll: 146899.20
+log_likelihood_O: 158.2639, log_likelihood_I: 0.0000, anneal_ph *KL: 24.6862, lam * reg_loss: 11.8133
+EPOCH[40/400] Elapsed time: 23.7 Neg_ll: 146576.50
+log_likelihood_O: 158.2744, log_likelihood_I: 0.0000, anneal_ph *KL: 24.8831, lam * reg_loss: 11.8003
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03521378]), 'recall': array([0.07707948]), 'ndcg': array([0.06438648])}
+EPOCH[41/400] Elapsed time: 23.8 Neg_ll: 146400.53
+log_likelihood_O: 161.3990, log_likelihood_I: 0.0000, anneal_ph *KL: 24.5215, lam * reg_loss: 11.9979
+EPOCH[42/400] Elapsed time: 23.6 Neg_ll: 150955.68
+log_likelihood_O: 160.8576, log_likelihood_I: 0.0000, anneal_ph *KL: 24.3414, lam * reg_loss: 11.9862
+EPOCH[43/400] Elapsed time: 23.6 Neg_ll: 149250.89
+log_likelihood_O: 159.1458, log_likelihood_I: 0.0000, anneal_ph *KL: 24.3465, lam * reg_loss: 11.9395
+EPOCH[44/400] Elapsed time: 23.5 Neg_ll: 148427.53
+log_likelihood_O: 160.0045, log_likelihood_I: 0.0000, anneal_ph *KL: 24.5122, lam * reg_loss: 11.8976
+EPOCH[45/400] Elapsed time: 23.5 Neg_ll: 147785.20
+log_likelihood_O: 157.4840, log_likelihood_I: 0.0000, anneal_ph *KL: 24.6617, lam * reg_loss: 11.8460
+EPOCH[46/400] Elapsed time: 23.7 Neg_ll: 147264.91
+log_likelihood_O: 157.5163, log_likelihood_I: 0.0000, anneal_ph *KL: 24.8367, lam * reg_loss: 11.8130
+EPOCH[47/400] Elapsed time: 23.7 Neg_ll: 146905.50
+log_likelihood_O: 156.5008, log_likelihood_I: 0.0000, anneal_ph *KL: 24.9598, lam * reg_loss: 11.7831
+EPOCH[48/400] Elapsed time: 23.6 Neg_ll: 146590.53
+log_likelihood_O: 157.0555, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1291, lam * reg_loss: 11.7534
+EPOCH[49/400] Elapsed time: 23.7 Neg_ll: 146412.65
+log_likelihood_O: 156.1881, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2677, lam * reg_loss: 11.7392
+EPOCH[50/400] Elapsed time: 23.7 Neg_ll: 146172.84
+log_likelihood_O: 155.7616, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4025, lam * reg_loss: 11.7344
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03531957]), 'recall': array([0.07768107]), 'ndcg': array([0.06449938])}
+EPOCH[51/400] Elapsed time: 23.7 Neg_ll: 145984.23
+log_likelihood_O: 163.0865, log_likelihood_I: 0.0000, anneal_ph *KL: 24.8781, lam * reg_loss: 11.9226
+EPOCH[52/400] Elapsed time: 23.8 Neg_ll: 150509.01
+log_likelihood_O: 161.0882, log_likelihood_I: 0.0000, anneal_ph *KL: 24.7047, lam * reg_loss: 11.9452
+EPOCH[53/400] Elapsed time: 23.8 Neg_ll: 149034.61
+log_likelihood_O: 160.6525, log_likelihood_I: 0.0000, anneal_ph *KL: 24.7326, lam * reg_loss: 11.9030
+EPOCH[54/400] Elapsed time: 23.8 Neg_ll: 148043.02
+log_likelihood_O: 158.6686, log_likelihood_I: 0.0000, anneal_ph *KL: 24.8218, lam * reg_loss: 11.8599
+EPOCH[55/400] Elapsed time: 23.5 Neg_ll: 147368.82
+log_likelihood_O: 159.1251, log_likelihood_I: 0.0000, anneal_ph *KL: 24.9783, lam * reg_loss: 11.8211
+EPOCH[56/400] Elapsed time: 23.6 Neg_ll: 146997.59
+log_likelihood_O: 157.5723, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1196, lam * reg_loss: 11.7866
+EPOCH[57/400] Elapsed time: 23.5 Neg_ll: 146577.39
+log_likelihood_O: 160.7654, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2461, lam * reg_loss: 11.7601
+EPOCH[58/400] Elapsed time: 23.8 Neg_ll: 146306.18
+log_likelihood_O: 156.7980, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4212, lam * reg_loss: 11.7478
+EPOCH[59/400] Elapsed time: 23.9 Neg_ll: 146111.12
+log_likelihood_O: 158.0281, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5303, lam * reg_loss: 11.7324
+EPOCH[60/400] Elapsed time: 23.5 Neg_ll: 145922.56
+log_likelihood_O: 157.3039, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6349, lam * reg_loss: 11.7187
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03540798]), 'recall': array([0.0774943]), 'ndcg': array([0.06460163])}
+EPOCH[61/400] Elapsed time: 23.5 Neg_ll: 145704.52
+log_likelihood_O: 160.6077, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1335, lam * reg_loss: 11.8979
+EPOCH[62/400] Elapsed time: 23.7 Neg_ll: 150359.12
+log_likelihood_O: 159.5835, log_likelihood_I: 0.0000, anneal_ph *KL: 24.9293, lam * reg_loss: 11.9024
+EPOCH[63/400] Elapsed time: 23.8 Neg_ll: 148741.34
+log_likelihood_O: 160.3085, log_likelihood_I: 0.0000, anneal_ph *KL: 24.9031, lam * reg_loss: 11.8655
+EPOCH[64/400] Elapsed time: 23.8 Neg_ll: 147894.98
+log_likelihood_O: 159.6283, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0077, lam * reg_loss: 11.8254
+EPOCH[65/400] Elapsed time: 23.6 Neg_ll: 147300.24
+log_likelihood_O: 157.8122, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1377, lam * reg_loss: 11.7859
+EPOCH[66/400] Elapsed time: 23.5 Neg_ll: 146829.52
+log_likelihood_O: 158.5159, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2805, lam * reg_loss: 11.7515
+EPOCH[67/400] Elapsed time: 23.7 Neg_ll: 146553.72
+log_likelihood_O: 158.1455, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4001, lam * reg_loss: 11.7183
+EPOCH[68/400] Elapsed time: 23.7 Neg_ll: 146179.19
+log_likelihood_O: 156.2366, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5359, lam * reg_loss: 11.7038
+EPOCH[69/400] Elapsed time: 23.7 Neg_ll: 145963.03
+log_likelihood_O: 157.0446, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6279, lam * reg_loss: 11.6942
+EPOCH[70/400] Elapsed time: 23.7 Neg_ll: 145810.25
+log_likelihood_O: 156.5157, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7028, lam * reg_loss: 11.6846
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03537325]), 'recall': array([0.07770331]), 'ndcg': array([0.06460801])}
+EPOCH[71/400] Elapsed time: 23.9 Neg_ll: 145626.95
+log_likelihood_O: 159.4289, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2017, lam * reg_loss: 11.8757
+EPOCH[72/400] Elapsed time: 23.6 Neg_ll: 150361.90
+log_likelihood_O: 160.2927, log_likelihood_I: 0.0000, anneal_ph *KL: 24.9873, lam * reg_loss: 11.8776
+EPOCH[73/400] Elapsed time: 23.6 Neg_ll: 148666.37
+log_likelihood_O: 159.2383, log_likelihood_I: 0.0000, anneal_ph *KL: 24.9856, lam * reg_loss: 11.8510
+EPOCH[74/400] Elapsed time: 23.5 Neg_ll: 147862.50
+log_likelihood_O: 156.6352, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1088, lam * reg_loss: 11.8128
+EPOCH[75/400] Elapsed time: 23.6 Neg_ll: 147328.48
+log_likelihood_O: 157.4595, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2183, lam * reg_loss: 11.7686
+EPOCH[76/400] Elapsed time: 23.9 Neg_ll: 146777.97
+log_likelihood_O: 159.4591, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3081, lam * reg_loss: 11.7323
+EPOCH[77/400] Elapsed time: 23.8 Neg_ll: 146482.22
+log_likelihood_O: 157.0489, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4418, lam * reg_loss: 11.7113
+EPOCH[78/400] Elapsed time: 23.6 Neg_ll: 146272.06
+log_likelihood_O: 154.6815, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5326, lam * reg_loss: 11.6997
+EPOCH[79/400] Elapsed time: 23.6 Neg_ll: 145958.41
+log_likelihood_O: 158.0269, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6504, lam * reg_loss: 11.6836
+EPOCH[80/400] Elapsed time: 23.3 Neg_ll: 145824.72
+log_likelihood_O: 156.3692, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7901, lam * reg_loss: 11.6816
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03526273]), 'recall': array([0.07754361]), 'ndcg': array([0.06434583])}
+EPOCH[81/400] Elapsed time: 23.6 Neg_ll: 145641.18
+log_likelihood_O: 162.2533, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2478, lam * reg_loss: 11.8673
+EPOCH[82/400] Elapsed time: 23.5 Neg_ll: 150218.98
+log_likelihood_O: 160.2714, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0681, lam * reg_loss: 11.8729
+EPOCH[83/400] Elapsed time: 23.6 Neg_ll: 148656.01
+log_likelihood_O: 157.9362, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0548, lam * reg_loss: 11.8398
+EPOCH[84/400] Elapsed time: 23.9 Neg_ll: 147767.34
+log_likelihood_O: 156.8226, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1108, lam * reg_loss: 11.7937
+EPOCH[85/400] Elapsed time: 23.7 Neg_ll: 147123.72
+log_likelihood_O: 157.0351, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2282, lam * reg_loss: 11.7506
+EPOCH[86/400] Elapsed time: 23.6 Neg_ll: 146692.01
+log_likelihood_O: 158.0342, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3924, lam * reg_loss: 11.7214
+EPOCH[87/400] Elapsed time: 23.7 Neg_ll: 146359.69
+log_likelihood_O: 154.7794, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4879, lam * reg_loss: 11.6975
+EPOCH[88/400] Elapsed time: 23.7 Neg_ll: 146131.14
+log_likelihood_O: 158.0614, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5826, lam * reg_loss: 11.6732
+EPOCH[89/400] Elapsed time: 23.6 Neg_ll: 145900.83
+log_likelihood_O: 156.4232, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6862, lam * reg_loss: 11.6653
+EPOCH[90/400] Elapsed time: 23.6 Neg_ll: 145692.74
+log_likelihood_O: 155.7237, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7821, lam * reg_loss: 11.6594
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03531167]), 'recall': array([0.07750091]), 'ndcg': array([0.06447647])}
+EPOCH[91/400] Elapsed time: 23.7 Neg_ll: 145578.93
+log_likelihood_O: 161.0540, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2168, lam * reg_loss: 11.8385
+EPOCH[92/400] Elapsed time: 23.6 Neg_ll: 150211.08
+log_likelihood_O: 159.7184, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0220, lam * reg_loss: 11.8454
+EPOCH[93/400] Elapsed time: 23.7 Neg_ll: 148580.15
+log_likelihood_O: 157.7979, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0276, lam * reg_loss: 11.8101
+EPOCH[94/400] Elapsed time: 23.7 Neg_ll: 147750.82
+log_likelihood_O: 157.0864, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1032, lam * reg_loss: 11.7786
+EPOCH[95/400] Elapsed time: 23.5 Neg_ll: 147188.16
+log_likelihood_O: 156.8728, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2111, lam * reg_loss: 11.7380
+EPOCH[96/400] Elapsed time: 23.8 Neg_ll: 146668.74
+log_likelihood_O: 155.7431, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3469, lam * reg_loss: 11.7006
+EPOCH[97/400] Elapsed time: 23.8 Neg_ll: 146382.49
+log_likelihood_O: 156.7894, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4679, lam * reg_loss: 11.6747
+EPOCH[98/400] Elapsed time: 23.6 Neg_ll: 146077.10
+log_likelihood_O: 155.3736, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5676, lam * reg_loss: 11.6628
+EPOCH[99/400] Elapsed time: 23.8 Neg_ll: 145852.02
+log_likelihood_O: 155.2001, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7098, lam * reg_loss: 11.6631
+EPOCH[100/400] Elapsed time: 23.6 Neg_ll: 145686.14
+log_likelihood_O: 155.4702, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7803, lam * reg_loss: 11.6493
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03526746]), 'recall': array([0.07726379]), 'ndcg': array([0.06476061])}
+EPOCH[101/400] Elapsed time: 23.8 Neg_ll: 145532.39
+log_likelihood_O: 162.3435, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2532, lam * reg_loss: 11.8285
+EPOCH[102/400] Elapsed time: 23.5 Neg_ll: 150232.15
+log_likelihood_O: 159.1051, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0416, lam * reg_loss: 11.8398
+EPOCH[103/400] Elapsed time: 23.7 Neg_ll: 148517.50
+log_likelihood_O: 158.9243, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0123, lam * reg_loss: 11.8089
+EPOCH[104/400] Elapsed time: 23.6 Neg_ll: 147663.08
+log_likelihood_O: 155.7884, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1111, lam * reg_loss: 11.7646
+EPOCH[105/400] Elapsed time: 23.7 Neg_ll: 147057.30
+log_likelihood_O: 159.2042, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2199, lam * reg_loss: 11.7284
+EPOCH[106/400] Elapsed time: 23.5 Neg_ll: 146672.26
+log_likelihood_O: 158.3895, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3948, lam * reg_loss: 11.7056
+EPOCH[107/400] Elapsed time: 23.7 Neg_ll: 146353.06
+log_likelihood_O: 156.7546, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5109, lam * reg_loss: 11.6771
+EPOCH[108/400] Elapsed time: 23.7 Neg_ll: 146055.64
+log_likelihood_O: 158.3590, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5835, lam * reg_loss: 11.6634
+EPOCH[109/400] Elapsed time: 23.6 Neg_ll: 145774.26
+log_likelihood_O: 158.6702, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6781, lam * reg_loss: 11.6548
+EPOCH[110/400] Elapsed time: 23.4 Neg_ll: 145706.00
+log_likelihood_O: 157.7718, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7873, lam * reg_loss: 11.6418
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03529115]), 'recall': array([0.07748247]), 'ndcg': array([0.06464594])}
+EPOCH[111/400] Elapsed time: 23.7 Neg_ll: 145504.72
+log_likelihood_O: 160.3616, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2436, lam * reg_loss: 11.8219
+EPOCH[112/400] Elapsed time: 23.6 Neg_ll: 150355.03
+log_likelihood_O: 163.7175, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0531, lam * reg_loss: 11.8482
+EPOCH[113/400] Elapsed time: 23.6 Neg_ll: 148609.63
+log_likelihood_O: 160.1469, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0371, lam * reg_loss: 11.8200
+EPOCH[114/400] Elapsed time: 23.6 Neg_ll: 147722.88
+log_likelihood_O: 156.3533, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1245, lam * reg_loss: 11.7738
+EPOCH[115/400] Elapsed time: 23.6 Neg_ll: 147090.87
+log_likelihood_O: 158.4612, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2484, lam * reg_loss: 11.7400
+EPOCH[116/400] Elapsed time: 23.5 Neg_ll: 146659.31
+log_likelihood_O: 156.1894, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3809, lam * reg_loss: 11.7026
+EPOCH[117/400] Elapsed time: 23.7 Neg_ll: 146291.94
+log_likelihood_O: 157.1476, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5409, lam * reg_loss: 11.6875
+EPOCH[118/400] Elapsed time: 23.5 Neg_ll: 146044.19
+log_likelihood_O: 156.2683, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6117, lam * reg_loss: 11.6732
+EPOCH[119/400] Elapsed time: 23.8 Neg_ll: 145826.30
+log_likelihood_O: 157.2140, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6914, lam * reg_loss: 11.6587
+EPOCH[120/400] Elapsed time: 24.1 Neg_ll: 145645.07
+log_likelihood_O: 155.6992, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7933, lam * reg_loss: 11.6524
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.035078]), 'recall': array([0.07717071]), 'ndcg': array([0.06463412])}
+EPOCH[121/400] Elapsed time: 23.7 Neg_ll: 145532.20
+log_likelihood_O: 158.7384, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2507, lam * reg_loss: 11.8136
+EPOCH[122/400] Elapsed time: 23.8 Neg_ll: 150024.16
+log_likelihood_O: 158.6904, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0389, lam * reg_loss: 11.8249
+EPOCH[123/400] Elapsed time: 23.7 Neg_ll: 148486.86
+log_likelihood_O: 158.6176, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0993, lam * reg_loss: 11.8187
+EPOCH[124/400] Elapsed time: 23.5 Neg_ll: 147747.03
+log_likelihood_O: 157.2186, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1864, lam * reg_loss: 11.7757
+EPOCH[125/400] Elapsed time: 23.7 Neg_ll: 146983.53
+log_likelihood_O: 157.4537, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2937, lam * reg_loss: 11.7344
+EPOCH[126/400] Elapsed time: 23.6 Neg_ll: 146582.29
+log_likelihood_O: 156.9043, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4807, lam * reg_loss: 11.7103
+EPOCH[127/400] Elapsed time: 23.7 Neg_ll: 146232.22
+log_likelihood_O: 157.0110, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5299, lam * reg_loss: 11.6840
+EPOCH[128/400] Elapsed time: 23.5 Neg_ll: 145988.08
+log_likelihood_O: 156.5896, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6860, lam * reg_loss: 11.6699
+EPOCH[129/400] Elapsed time: 23.4 Neg_ll: 145682.95
+log_likelihood_O: 156.6461, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7748, lam * reg_loss: 11.6477
+EPOCH[130/400] Elapsed time: 23.7 Neg_ll: 145498.43
+log_likelihood_O: 157.7112, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8483, lam * reg_loss: 11.6378
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03531167]), 'recall': array([0.07755337]), 'ndcg': array([0.06469272])}
+EPOCH[131/400] Elapsed time: 23.9 Neg_ll: 145371.06
+log_likelihood_O: 161.3739, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3075, lam * reg_loss: 11.8026
+EPOCH[132/400] Elapsed time: 23.5 Neg_ll: 150009.56
+log_likelihood_O: 158.1440, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1126, lam * reg_loss: 11.8138
+EPOCH[133/400] Elapsed time: 23.5 Neg_ll: 148455.85
+log_likelihood_O: 159.3218, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0899, lam * reg_loss: 11.7830
+EPOCH[134/400] Elapsed time: 23.7 Neg_ll: 147473.42
+log_likelihood_O: 156.9622, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1763, lam * reg_loss: 11.7537
+EPOCH[135/400] Elapsed time: 23.7 Neg_ll: 146953.87
+log_likelihood_O: 156.7588, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2899, lam * reg_loss: 11.7136
+EPOCH[136/400] Elapsed time: 23.8 Neg_ll: 146501.91
+log_likelihood_O: 154.8727, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4038, lam * reg_loss: 11.6874
+EPOCH[137/400] Elapsed time: 23.7 Neg_ll: 146239.63
+log_likelihood_O: 156.6792, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5532, lam * reg_loss: 11.6724
+EPOCH[138/400] Elapsed time: 23.6 Neg_ll: 145967.02
+log_likelihood_O: 154.7000, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6381, lam * reg_loss: 11.6509
+EPOCH[139/400] Elapsed time: 23.5 Neg_ll: 145726.57
+log_likelihood_O: 155.8060, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7234, lam * reg_loss: 11.6400
+EPOCH[140/400] Elapsed time: 23.6 Neg_ll: 145527.35
+log_likelihood_O: 154.8044, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8233, lam * reg_loss: 11.6390
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03525009]), 'recall': array([0.07755425]), 'ndcg': array([0.06461576])}
+EPOCH[141/400] Elapsed time: 23.6 Neg_ll: 145437.00
+log_likelihood_O: 162.0331, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2253, lam * reg_loss: 11.8003
+EPOCH[142/400] Elapsed time: 23.9 Neg_ll: 149955.32
+log_likelihood_O: 160.2528, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0272, lam * reg_loss: 11.8182
+EPOCH[143/400] Elapsed time: 23.7 Neg_ll: 148525.38
+log_likelihood_O: 160.4751, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0507, lam * reg_loss: 11.7916
+EPOCH[144/400] Elapsed time: 23.6 Neg_ll: 147652.00
+log_likelihood_O: 157.1608, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1744, lam * reg_loss: 11.7587
+EPOCH[145/400] Elapsed time: 23.5 Neg_ll: 147090.40
+log_likelihood_O: 156.5762, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2468, lam * reg_loss: 11.7148
+EPOCH[146/400] Elapsed time: 23.7 Neg_ll: 146593.30
+log_likelihood_O: 155.8440, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3843, lam * reg_loss: 11.6877
+EPOCH[147/400] Elapsed time: 23.6 Neg_ll: 146344.92
+log_likelihood_O: 157.7868, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4572, lam * reg_loss: 11.6578
+EPOCH[148/400] Elapsed time: 23.5 Neg_ll: 145995.16
+log_likelihood_O: 157.6390, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5998, lam * reg_loss: 11.6491
+EPOCH[149/400] Elapsed time: 23.6 Neg_ll: 145767.17
+log_likelihood_O: 158.1474, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6809, lam * reg_loss: 11.6374
+EPOCH[150/400] Elapsed time: 23.7 Neg_ll: 145620.73
+log_likelihood_O: 159.0183, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8004, lam * reg_loss: 11.6346
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03522957]), 'recall': array([0.07754877]), 'ndcg': array([0.06456083])}
+EPOCH[151/400] Elapsed time: 23.5 Neg_ll: 145456.68
+log_likelihood_O: 161.1189, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2665, lam * reg_loss: 11.7972
+EPOCH[152/400] Elapsed time: 23.4 Neg_ll: 150016.83
+log_likelihood_O: 157.8046, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0509, lam * reg_loss: 11.8121
+EPOCH[153/400] Elapsed time: 23.4 Neg_ll: 148426.43
+log_likelihood_O: 161.0711, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0386, lam * reg_loss: 11.7913
+EPOCH[154/400] Elapsed time: 23.9 Neg_ll: 147480.00
+log_likelihood_O: 158.3178, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1655, lam * reg_loss: 11.7615
+EPOCH[155/400] Elapsed time: 23.5 Neg_ll: 147001.12
+log_likelihood_O: 159.3280, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2586, lam * reg_loss: 11.7236
+EPOCH[156/400] Elapsed time: 23.6 Neg_ll: 146570.47
+log_likelihood_O: 154.1141, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4194, lam * reg_loss: 11.6994
+EPOCH[157/400] Elapsed time: 23.8 Neg_ll: 146177.69
+log_likelihood_O: 158.4814, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5691, lam * reg_loss: 11.6699
+EPOCH[158/400] Elapsed time: 23.3 Neg_ll: 145969.51
+log_likelihood_O: 157.7238, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6273, lam * reg_loss: 11.6485
+EPOCH[159/400] Elapsed time: 23.7 Neg_ll: 145720.35
+log_likelihood_O: 156.7866, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7331, lam * reg_loss: 11.6375
+EPOCH[160/400] Elapsed time: 23.5 Neg_ll: 145539.90
+log_likelihood_O: 155.1763, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8152, lam * reg_loss: 11.6313
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03532746]), 'recall': array([0.07774759]), 'ndcg': array([0.06461308])}
+EPOCH[161/400] Elapsed time: 23.7 Neg_ll: 145368.97
+log_likelihood_O: 161.5463, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2562, lam * reg_loss: 11.7998
+EPOCH[162/400] Elapsed time: 23.5 Neg_ll: 150075.72
+log_likelihood_O: 160.1809, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0741, lam * reg_loss: 11.8222
+EPOCH[163/400] Elapsed time: 23.7 Neg_ll: 148520.25
+log_likelihood_O: 159.2702, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0947, lam * reg_loss: 11.8047
+EPOCH[164/400] Elapsed time: 23.8 Neg_ll: 147662.18
+log_likelihood_O: 158.2562, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1542, lam * reg_loss: 11.7642
+EPOCH[165/400] Elapsed time: 23.6 Neg_ll: 146931.58
+log_likelihood_O: 157.7597, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2662, lam * reg_loss: 11.7327
+EPOCH[166/400] Elapsed time: 23.5 Neg_ll: 146614.31
+log_likelihood_O: 155.4661, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4279, lam * reg_loss: 11.7108
+EPOCH[167/400] Elapsed time: 23.5 Neg_ll: 146228.95
+log_likelihood_O: 158.4733, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5492, lam * reg_loss: 11.6917
+EPOCH[168/400] Elapsed time: 23.5 Neg_ll: 145997.63
+log_likelihood_O: 157.9879, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6476, lam * reg_loss: 11.6724
+EPOCH[169/400] Elapsed time: 23.7 Neg_ll: 145850.59
+log_likelihood_O: 156.1134, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7746, lam * reg_loss: 11.6588
+EPOCH[170/400] Elapsed time: 23.6 Neg_ll: 145581.22
+log_likelihood_O: 156.7244, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8149, lam * reg_loss: 11.6484
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03549008]), 'recall': array([0.07801713]), 'ndcg': array([0.06482931])}
+EPOCH[171/400] Elapsed time: 23.6 Neg_ll: 145452.28
+log_likelihood_O: 161.5473, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2940, lam * reg_loss: 11.8002
+EPOCH[172/400] Elapsed time: 23.6 Neg_ll: 149964.77
+log_likelihood_O: 158.9218, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1227, lam * reg_loss: 11.8184
+EPOCH[173/400] Elapsed time: 23.7 Neg_ll: 148378.13
+log_likelihood_O: 158.0889, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0997, lam * reg_loss: 11.7938
+EPOCH[174/400] Elapsed time: 23.7 Neg_ll: 147491.71
+log_likelihood_O: 159.1219, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1851, lam * reg_loss: 11.7545
+EPOCH[175/400] Elapsed time: 23.6 Neg_ll: 146950.30
+log_likelihood_O: 158.5037, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2807, lam * reg_loss: 11.7122
+EPOCH[176/400] Elapsed time: 23.8 Neg_ll: 146509.12
+log_likelihood_O: 158.2902, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4175, lam * reg_loss: 11.6867
+EPOCH[177/400] Elapsed time: 23.6 Neg_ll: 146155.38
+log_likelihood_O: 158.9996, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5203, lam * reg_loss: 11.6638
+EPOCH[178/400] Elapsed time: 23.6 Neg_ll: 145881.44
+log_likelihood_O: 156.7660, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6526, lam * reg_loss: 11.6457
+EPOCH[179/400] Elapsed time: 23.6 Neg_ll: 145661.85
+log_likelihood_O: 156.9711, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7399, lam * reg_loss: 11.6324
+EPOCH[180/400] Elapsed time: 23.7 Neg_ll: 145463.83
+log_likelihood_O: 157.2379, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8298, lam * reg_loss: 11.6307
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03538272]), 'recall': array([0.07776091]), 'ndcg': array([0.06465629])}
+EPOCH[181/400] Elapsed time: 23.5 Neg_ll: 145331.80
+log_likelihood_O: 161.7482, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2371, lam * reg_loss: 11.7837
+EPOCH[182/400] Elapsed time: 23.5 Neg_ll: 150018.66
+log_likelihood_O: 161.1896, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0384, lam * reg_loss: 11.7994
+EPOCH[183/400] Elapsed time: 23.5 Neg_ll: 148478.08
+log_likelihood_O: 158.9469, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0287, lam * reg_loss: 11.7781
+EPOCH[184/400] Elapsed time: 23.5 Neg_ll: 147567.91
+log_likelihood_O: 156.3498, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1472, lam * reg_loss: 11.7399
+EPOCH[185/400] Elapsed time: 23.7 Neg_ll: 146972.40
+log_likelihood_O: 157.7414, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2430, lam * reg_loss: 11.7085
+EPOCH[186/400] Elapsed time: 23.7 Neg_ll: 146503.96
+log_likelihood_O: 159.1694, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3847, lam * reg_loss: 11.6912
+EPOCH[187/400] Elapsed time: 23.7 Neg_ll: 146321.84
+log_likelihood_O: 156.0887, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4898, lam * reg_loss: 11.6659
+EPOCH[188/400] Elapsed time: 23.6 Neg_ll: 145982.37
+log_likelihood_O: 156.9187, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5607, lam * reg_loss: 11.6405
+EPOCH[189/400] Elapsed time: 23.5 Neg_ll: 145769.72
+log_likelihood_O: 155.8885, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6905, lam * reg_loss: 11.6298
+EPOCH[190/400] Elapsed time: 23.6 Neg_ll: 145622.39
+log_likelihood_O: 156.7651, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7757, lam * reg_loss: 11.6218
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03511273]), 'recall': array([0.07715513]), 'ndcg': array([0.06438242])}
+EPOCH[191/400] Elapsed time: 23.3 Neg_ll: 145475.75
+log_likelihood_O: 158.5443, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2637, lam * reg_loss: 11.7785
+EPOCH[192/400] Elapsed time: 23.5 Neg_ll: 149937.28
+log_likelihood_O: 159.6543, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0665, lam * reg_loss: 11.8000
+EPOCH[193/400] Elapsed time: 23.6 Neg_ll: 148357.02
+log_likelihood_O: 159.5063, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0467, lam * reg_loss: 11.7766
+EPOCH[194/400] Elapsed time: 23.7 Neg_ll: 147529.46
+log_likelihood_O: 158.9923, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1298, lam * reg_loss: 11.7460
+EPOCH[195/400] Elapsed time: 23.7 Neg_ll: 146986.21
+log_likelihood_O: 156.2443, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2149, lam * reg_loss: 11.7105
+EPOCH[196/400] Elapsed time: 23.7 Neg_ll: 146506.20
+log_likelihood_O: 157.1107, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4067, lam * reg_loss: 11.6818
+EPOCH[197/400] Elapsed time: 23.6 Neg_ll: 146186.13
+log_likelihood_O: 156.3434, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4712, lam * reg_loss: 11.6606
+EPOCH[198/400] Elapsed time: 23.9 Neg_ll: 145939.63
+log_likelihood_O: 155.6467, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6260, lam * reg_loss: 11.6500
+EPOCH[199/400] Elapsed time: 23.5 Neg_ll: 145698.23
+log_likelihood_O: 156.0300, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7273, lam * reg_loss: 11.6365
+EPOCH[200/400] Elapsed time: 23.3 Neg_ll: 145539.29
+log_likelihood_O: 154.5103, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8049, lam * reg_loss: 11.6275
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03540798]), 'recall': array([0.07765173]), 'ndcg': array([0.06472044])}
+EPOCH[201/400] Elapsed time: 23.6 Neg_ll: 145408.63
+log_likelihood_O: 160.3059, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2731, lam * reg_loss: 11.7776
+EPOCH[202/400] Elapsed time: 23.7 Neg_ll: 149887.80
+log_likelihood_O: 158.2648, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0602, lam * reg_loss: 11.7897
+EPOCH[203/400] Elapsed time: 23.7 Neg_ll: 148390.33
+log_likelihood_O: 156.4335, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0868, lam * reg_loss: 11.7747
+EPOCH[204/400] Elapsed time: 23.6 Neg_ll: 147467.20
+log_likelihood_O: 155.2868, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1598, lam * reg_loss: 11.7440
+EPOCH[205/400] Elapsed time: 23.8 Neg_ll: 146925.00
+log_likelihood_O: 156.1732, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2829, lam * reg_loss: 11.7108
+EPOCH[206/400] Elapsed time: 23.6 Neg_ll: 146523.19
+log_likelihood_O: 156.8731, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3859, lam * reg_loss: 11.6789
+EPOCH[207/400] Elapsed time: 23.6 Neg_ll: 146197.00
+log_likelihood_O: 155.2462, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4984, lam * reg_loss: 11.6572
+EPOCH[208/400] Elapsed time: 23.8 Neg_ll: 145967.54
+log_likelihood_O: 155.5346, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6159, lam * reg_loss: 11.6421
+EPOCH[209/400] Elapsed time: 23.6 Neg_ll: 145707.31
+log_likelihood_O: 155.3830, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7228, lam * reg_loss: 11.6354
+EPOCH[210/400] Elapsed time: 23.9 Neg_ll: 145549.87
+log_likelihood_O: 154.6291, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7766, lam * reg_loss: 11.6262
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03525009]), 'recall': array([0.07741553]), 'ndcg': array([0.06456476])}
+EPOCH[211/400] Elapsed time: 23.7 Neg_ll: 145415.09
+log_likelihood_O: 161.7452, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2167, lam * reg_loss: 11.7754
+EPOCH[212/400] Elapsed time: 23.7 Neg_ll: 149854.74
+log_likelihood_O: 157.8215, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0727, lam * reg_loss: 11.7944
+EPOCH[213/400] Elapsed time: 23.8 Neg_ll: 148408.33
+log_likelihood_O: 156.4579, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0748, lam * reg_loss: 11.7783
+EPOCH[214/400] Elapsed time: 23.7 Neg_ll: 147583.27
+log_likelihood_O: 154.4751, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2286, lam * reg_loss: 11.7501
+EPOCH[215/400] Elapsed time: 23.7 Neg_ll: 146991.57
+log_likelihood_O: 154.7626, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2698, lam * reg_loss: 11.7104
+EPOCH[216/400] Elapsed time: 23.5 Neg_ll: 146513.82
+log_likelihood_O: 155.3520, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4001, lam * reg_loss: 11.6820
+EPOCH[217/400] Elapsed time: 23.7 Neg_ll: 146150.84
+log_likelihood_O: 154.8305, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5456, lam * reg_loss: 11.6607
+EPOCH[218/400] Elapsed time: 23.6 Neg_ll: 145936.18
+log_likelihood_O: 155.4179, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6441, lam * reg_loss: 11.6492
+EPOCH[219/400] Elapsed time: 23.8 Neg_ll: 145732.90
+log_likelihood_O: 155.4462, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7290, lam * reg_loss: 11.6307
+EPOCH[220/400] Elapsed time: 23.7 Neg_ll: 145503.54
+log_likelihood_O: 154.6250, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8128, lam * reg_loss: 11.6226
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03522483]), 'recall': array([0.07753261]), 'ndcg': array([0.06460818])}
+EPOCH[221/400] Elapsed time: 23.7 Neg_ll: 145357.29
+log_likelihood_O: 162.7764, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2692, lam * reg_loss: 11.7774
+EPOCH[222/400] Elapsed time: 23.4 Neg_ll: 149968.57
+log_likelihood_O: 158.1993, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0915, lam * reg_loss: 11.8013
+EPOCH[223/400] Elapsed time: 23.7 Neg_ll: 148461.57
+log_likelihood_O: 159.0406, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0805, lam * reg_loss: 11.7760
+EPOCH[224/400] Elapsed time: 23.7 Neg_ll: 147569.82
+log_likelihood_O: 154.7556, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1580, lam * reg_loss: 11.7435
+EPOCH[225/400] Elapsed time: 23.7 Neg_ll: 146940.98
+log_likelihood_O: 157.9727, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2982, lam * reg_loss: 11.7130
+EPOCH[226/400] Elapsed time: 23.7 Neg_ll: 146578.25
+log_likelihood_O: 156.0868, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4117, lam * reg_loss: 11.6835
+EPOCH[227/400] Elapsed time: 23.7 Neg_ll: 146248.57
+log_likelihood_O: 154.3007, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5600, lam * reg_loss: 11.6706
+EPOCH[228/400] Elapsed time: 23.8 Neg_ll: 145902.95
+log_likelihood_O: 155.4122, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6458, lam * reg_loss: 11.6499
+EPOCH[229/400] Elapsed time: 23.7 Neg_ll: 145664.58
+log_likelihood_O: 155.3336, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7727, lam * reg_loss: 11.6383
+EPOCH[230/400] Elapsed time: 23.9 Neg_ll: 145567.41
+log_likelihood_O: 155.4856, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8175, lam * reg_loss: 11.6358
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03510326]), 'recall': array([0.07719712]), 'ndcg': array([0.06429279])}
+EPOCH[231/400] Elapsed time: 23.4 Neg_ll: 145370.42
+log_likelihood_O: 160.2596, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2746, lam * reg_loss: 11.7772
+EPOCH[232/400] Elapsed time: 23.6 Neg_ll: 149900.37
+log_likelihood_O: 157.3603, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1143, lam * reg_loss: 11.7896
+EPOCH[233/400] Elapsed time: 23.7 Neg_ll: 148433.83
+log_likelihood_O: 158.4805, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0963, lam * reg_loss: 11.7677
+EPOCH[234/400] Elapsed time: 23.5 Neg_ll: 147559.90
+log_likelihood_O: 156.7960, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1861, lam * reg_loss: 11.7440
+EPOCH[235/400] Elapsed time: 23.6 Neg_ll: 146966.39
+log_likelihood_O: 156.0609, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2820, lam * reg_loss: 11.7102
+EPOCH[236/400] Elapsed time: 23.4 Neg_ll: 146509.24
+log_likelihood_O: 155.6504, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4481, lam * reg_loss: 11.6847
+EPOCH[237/400] Elapsed time: 23.7 Neg_ll: 146166.26
+log_likelihood_O: 155.5776, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5441, lam * reg_loss: 11.6642
+EPOCH[238/400] Elapsed time: 23.7 Neg_ll: 145878.14
+log_likelihood_O: 156.1161, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6538, lam * reg_loss: 11.6427
+EPOCH[239/400] Elapsed time: 23.8 Neg_ll: 145619.37
+log_likelihood_O: 156.3179, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7456, lam * reg_loss: 11.6286
+EPOCH[240/400] Elapsed time: 23.7 Neg_ll: 145485.67
+log_likelihood_O: 155.1778, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8046, lam * reg_loss: 11.6153
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03497537]), 'recall': array([0.07684954]), 'ndcg': array([0.06407702])}
+EPOCH[241/400] Elapsed time: 23.6 Neg_ll: 145376.01
+log_likelihood_O: 158.7656, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3223, lam * reg_loss: 11.7655
+EPOCH[242/400] Elapsed time: 23.5 Neg_ll: 149908.90
+log_likelihood_O: 155.9346, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1467, lam * reg_loss: 11.7813
+EPOCH[243/400] Elapsed time: 23.8 Neg_ll: 148298.61
+log_likelihood_O: 157.3613, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1223, lam * reg_loss: 11.7576
+EPOCH[244/400] Elapsed time: 23.7 Neg_ll: 147452.97
+log_likelihood_O: 155.1775, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1899, lam * reg_loss: 11.7244
+EPOCH[245/400] Elapsed time: 23.7 Neg_ll: 146879.05
+log_likelihood_O: 158.9713, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3255, lam * reg_loss: 11.6932
+EPOCH[246/400] Elapsed time: 23.7 Neg_ll: 146436.16
+log_likelihood_O: 156.8780, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4388, lam * reg_loss: 11.6649
+EPOCH[247/400] Elapsed time: 23.7 Neg_ll: 146144.20
+log_likelihood_O: 156.1814, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5371, lam * reg_loss: 11.6506
+EPOCH[248/400] Elapsed time: 23.7 Neg_ll: 145854.27
+log_likelihood_O: 155.0687, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6599, lam * reg_loss: 11.6390
+EPOCH[249/400] Elapsed time: 23.5 Neg_ll: 145669.24
+log_likelihood_O: 154.6075, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7868, lam * reg_loss: 11.6300
+EPOCH[250/400] Elapsed time: 23.6 Neg_ll: 145511.87
+log_likelihood_O: 156.5569, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8238, lam * reg_loss: 11.6108
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03507958]), 'recall': array([0.07688949]), 'ndcg': array([0.06430068])}
+EPOCH[251/400] Elapsed time: 23.6 Neg_ll: 145291.72
+log_likelihood_O: 158.0311, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2866, lam * reg_loss: 11.7574
+EPOCH[252/400] Elapsed time: 23.6 Neg_ll: 149855.98
+log_likelihood_O: 158.1246, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0863, lam * reg_loss: 11.7664
+EPOCH[253/400] Elapsed time: 23.8 Neg_ll: 148352.30
+log_likelihood_O: 159.4097, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0965, lam * reg_loss: 11.7458
+EPOCH[254/400] Elapsed time: 23.7 Neg_ll: 147479.27
+log_likelihood_O: 157.6331, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1831, lam * reg_loss: 11.7143
+EPOCH[255/400] Elapsed time: 23.7 Neg_ll: 146971.29
+log_likelihood_O: 159.2502, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2571, lam * reg_loss: 11.6871
+EPOCH[256/400] Elapsed time: 23.7 Neg_ll: 146495.27
+log_likelihood_O: 157.7222, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3793, lam * reg_loss: 11.6569
+EPOCH[257/400] Elapsed time: 23.9 Neg_ll: 146140.89
+log_likelihood_O: 157.2260, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5231, lam * reg_loss: 11.6375
+EPOCH[258/400] Elapsed time: 23.6 Neg_ll: 145955.36
+log_likelihood_O: 156.0939, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5961, lam * reg_loss: 11.6275
+EPOCH[259/400] Elapsed time: 23.5 Neg_ll: 145663.09
+log_likelihood_O: 156.6649, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7103, lam * reg_loss: 11.6190
+EPOCH[260/400] Elapsed time: 23.7 Neg_ll: 145506.47
+log_likelihood_O: 157.3318, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7728, lam * reg_loss: 11.6132
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03525483]), 'recall': array([0.07757658]), 'ndcg': array([0.0643835])}
+EPOCH[261/400] Elapsed time: 23.6 Neg_ll: 145367.03
+log_likelihood_O: 161.2348, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2911, lam * reg_loss: 11.7551
+EPOCH[262/400] Elapsed time: 23.7 Neg_ll: 149891.41
+log_likelihood_O: 159.4712, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1078, lam * reg_loss: 11.7668
+EPOCH[263/400] Elapsed time: 23.4 Neg_ll: 148273.21
+log_likelihood_O: 156.7556, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0904, lam * reg_loss: 11.7463
+EPOCH[264/400] Elapsed time: 23.5 Neg_ll: 147381.16
+log_likelihood_O: 157.0211, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2107, lam * reg_loss: 11.7213
+EPOCH[265/400] Elapsed time: 23.7 Neg_ll: 146827.70
+log_likelihood_O: 159.1686, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3324, lam * reg_loss: 11.6983
+EPOCH[266/400] Elapsed time: 23.6 Neg_ll: 146444.66
+log_likelihood_O: 159.2398, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4806, lam * reg_loss: 11.6779
+EPOCH[267/400] Elapsed time: 23.4 Neg_ll: 146136.85
+log_likelihood_O: 156.2276, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5879, lam * reg_loss: 11.6485
+EPOCH[268/400] Elapsed time: 23.8 Neg_ll: 145860.24
+log_likelihood_O: 155.9366, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6570, lam * reg_loss: 11.6291
+EPOCH[269/400] Elapsed time: 23.7 Neg_ll: 145629.39
+log_likelihood_O: 155.7053, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7751, lam * reg_loss: 11.6180
+EPOCH[270/400] Elapsed time: 23.7 Neg_ll: 145492.16
+log_likelihood_O: 157.1722, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8629, lam * reg_loss: 11.6114
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03528641]), 'recall': array([0.07725552]), 'ndcg': array([0.06436625])}
+EPOCH[271/400] Elapsed time: 23.7 Neg_ll: 145291.48
+log_likelihood_O: 160.7109, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3015, lam * reg_loss: 11.7529
+EPOCH[272/400] Elapsed time: 23.6 Neg_ll: 149926.92
+log_likelihood_O: 158.9122, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0600, lam * reg_loss: 11.7685
+EPOCH[273/400] Elapsed time: 23.7 Neg_ll: 148325.29
+log_likelihood_O: 160.8217, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0658, lam * reg_loss: 11.7521
+EPOCH[274/400] Elapsed time: 23.7 Neg_ll: 147489.51
+log_likelihood_O: 158.3840, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1904, lam * reg_loss: 11.7261
+EPOCH[275/400] Elapsed time: 23.9 Neg_ll: 146989.90
+log_likelihood_O: 155.9002, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2617, lam * reg_loss: 11.6916
+EPOCH[276/400] Elapsed time: 23.8 Neg_ll: 146467.90
+log_likelihood_O: 156.7603, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3979, lam * reg_loss: 11.6605
+EPOCH[277/400] Elapsed time: 23.8 Neg_ll: 146192.18
+log_likelihood_O: 155.1994, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5036, lam * reg_loss: 11.6329
+EPOCH[278/400] Elapsed time: 23.7 Neg_ll: 145880.01
+log_likelihood_O: 156.1744, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6113, lam * reg_loss: 11.6212
+EPOCH[279/400] Elapsed time: 23.5 Neg_ll: 145721.50
+log_likelihood_O: 154.9060, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6956, lam * reg_loss: 11.6134
+EPOCH[280/400] Elapsed time: 23.7 Neg_ll: 145529.02
+log_likelihood_O: 154.8167, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8044, lam * reg_loss: 11.6087
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03521378]), 'recall': array([0.07735266]), 'ndcg': array([0.06448277])}
+EPOCH[281/400] Elapsed time: 23.7 Neg_ll: 145364.38
+log_likelihood_O: 160.5210, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2618, lam * reg_loss: 11.7501
+EPOCH[282/400] Elapsed time: 23.6 Neg_ll: 149952.52
+log_likelihood_O: 158.8921, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0868, lam * reg_loss: 11.7755
+EPOCH[283/400] Elapsed time: 23.7 Neg_ll: 148402.00
+log_likelihood_O: 156.8739, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0810, lam * reg_loss: 11.7516
+EPOCH[284/400] Elapsed time: 23.5 Neg_ll: 147471.34
+log_likelihood_O: 158.7485, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1937, lam * reg_loss: 11.7230
+EPOCH[285/400] Elapsed time: 23.5 Neg_ll: 146934.90
+log_likelihood_O: 156.8490, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2734, lam * reg_loss: 11.6880
+EPOCH[286/400] Elapsed time: 23.6 Neg_ll: 146465.97
+log_likelihood_O: 158.4516, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4028, lam * reg_loss: 11.6649
+EPOCH[287/400] Elapsed time: 23.3 Neg_ll: 146135.78
+log_likelihood_O: 155.1656, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5442, lam * reg_loss: 11.6436
+EPOCH[288/400] Elapsed time: 23.3 Neg_ll: 145847.71
+log_likelihood_O: 156.0952, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6420, lam * reg_loss: 11.6275
+EPOCH[289/400] Elapsed time: 23.6 Neg_ll: 145635.59
+log_likelihood_O: 159.1749, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7064, lam * reg_loss: 11.6123
+EPOCH[290/400] Elapsed time: 23.8 Neg_ll: 145499.53
+log_likelihood_O: 155.8953, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8030, lam * reg_loss: 11.6066
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03498484]), 'recall': array([0.07679174]), 'ndcg': array([0.06420094])}
+EPOCH[291/400] Elapsed time: 23.9 Neg_ll: 145361.64
+log_likelihood_O: 158.3120, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2512, lam * reg_loss: 11.7433
+EPOCH[292/400] Elapsed time: 23.5 Neg_ll: 149934.10
+log_likelihood_O: 154.9929, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0736, lam * reg_loss: 11.7548
+EPOCH[293/400] Elapsed time: 23.4 Neg_ll: 148384.80
+log_likelihood_O: 157.1615, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0764, lam * reg_loss: 11.7361
+EPOCH[294/400] Elapsed time: 23.6 Neg_ll: 147591.23
+log_likelihood_O: 157.0379, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1468, lam * reg_loss: 11.7136
+EPOCH[295/400] Elapsed time: 23.6 Neg_ll: 146878.19
+log_likelihood_O: 156.5179, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2897, lam * reg_loss: 11.6835
+EPOCH[296/400] Elapsed time: 23.7 Neg_ll: 146550.98
+log_likelihood_O: 156.3726, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4183, lam * reg_loss: 11.6610
+EPOCH[297/400] Elapsed time: 23.7 Neg_ll: 146193.90
+log_likelihood_O: 155.0799, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5523, lam * reg_loss: 11.6437
+EPOCH[298/400] Elapsed time: 23.7 Neg_ll: 145889.78
+log_likelihood_O: 154.7247, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6397, lam * reg_loss: 11.6256
+EPOCH[299/400] Elapsed time: 23.4 Neg_ll: 145706.46
+log_likelihood_O: 155.3133, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7354, lam * reg_loss: 11.6115
+EPOCH[300/400] Elapsed time: 23.7 Neg_ll: 145507.79
+log_likelihood_O: 154.7584, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8380, lam * reg_loss: 11.6061
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03513484]), 'recall': array([0.07727081]), 'ndcg': array([0.06460439])}
+EPOCH[301/400] Elapsed time: 23.5 Neg_ll: 145337.86
+log_likelihood_O: 161.8633, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2146, lam * reg_loss: 11.7393
+EPOCH[302/400] Elapsed time: 23.8 Neg_ll: 149941.91
+log_likelihood_O: 158.2738, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0758, lam * reg_loss: 11.7643
+EPOCH[303/400] Elapsed time: 23.8 Neg_ll: 148465.99
+log_likelihood_O: 156.7063, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1080, lam * reg_loss: 11.7515
+EPOCH[304/400] Elapsed time: 23.5 Neg_ll: 147610.54
+log_likelihood_O: 159.2333, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2205, lam * reg_loss: 11.7198
+EPOCH[305/400] Elapsed time: 23.5 Neg_ll: 146952.21
+log_likelihood_O: 155.9969, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2972, lam * reg_loss: 11.6851
+EPOCH[306/400] Elapsed time: 23.6 Neg_ll: 146483.38
+log_likelihood_O: 156.6727, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4579, lam * reg_loss: 11.6601
+EPOCH[307/400] Elapsed time: 23.7 Neg_ll: 146166.68
+log_likelihood_O: 155.3598, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5601, lam * reg_loss: 11.6356
+EPOCH[308/400] Elapsed time: 23.6 Neg_ll: 145923.61
+log_likelihood_O: 155.6467, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6522, lam * reg_loss: 11.6177
+EPOCH[309/400] Elapsed time: 23.6 Neg_ll: 145639.38
+log_likelihood_O: 156.2118, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7856, lam * reg_loss: 11.6132
+EPOCH[310/400] Elapsed time: 23.9 Neg_ll: 145470.06
+log_likelihood_O: 155.6801, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8436, lam * reg_loss: 11.6029
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03530536]), 'recall': array([0.0775962]), 'ndcg': array([0.06458165])}
+EPOCH[311/400] Elapsed time: 23.6 Neg_ll: 145305.32
+log_likelihood_O: 160.6779, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2587, lam * reg_loss: 11.7372
+EPOCH[312/400] Elapsed time: 23.6 Neg_ll: 149985.37
+log_likelihood_O: 156.8642, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0130, lam * reg_loss: 11.7528
+EPOCH[313/400] Elapsed time: 23.7 Neg_ll: 148263.96
+log_likelihood_O: 160.0159, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0256, lam * reg_loss: 11.7395
+EPOCH[314/400] Elapsed time: 23.8 Neg_ll: 147522.51
+log_likelihood_O: 158.4915, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1291, lam * reg_loss: 11.7116
+EPOCH[315/400] Elapsed time: 23.7 Neg_ll: 146965.08
+log_likelihood_O: 155.6655, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2864, lam * reg_loss: 11.6857
+EPOCH[316/400] Elapsed time: 23.6 Neg_ll: 146552.09
+log_likelihood_O: 156.8166, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3678, lam * reg_loss: 11.6587
+EPOCH[317/400] Elapsed time: 23.6 Neg_ll: 146131.10
+log_likelihood_O: 157.1727, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4838, lam * reg_loss: 11.6393
+EPOCH[318/400] Elapsed time: 23.6 Neg_ll: 145823.57
+log_likelihood_O: 155.4639, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5977, lam * reg_loss: 11.6192
+EPOCH[319/400] Elapsed time: 23.6 Neg_ll: 145721.94
+log_likelihood_O: 154.5164, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7134, lam * reg_loss: 11.6064
+EPOCH[320/400] Elapsed time: 23.5 Neg_ll: 145544.42
+log_likelihood_O: 157.6355, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7902, lam * reg_loss: 11.6016
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.034988]), 'recall': array([0.07685493]), 'ndcg': array([0.06392455])}
+EPOCH[321/400] Elapsed time: 23.6 Neg_ll: 145335.79
+log_likelihood_O: 161.8522, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2452, lam * reg_loss: 11.7412
+EPOCH[322/400] Elapsed time: 23.6 Neg_ll: 149879.52
+log_likelihood_O: 158.9077, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0572, lam * reg_loss: 11.7623
+EPOCH[323/400] Elapsed time: 23.6 Neg_ll: 148295.52
+log_likelihood_O: 157.7471, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0725, lam * reg_loss: 11.7485
+EPOCH[324/400] Elapsed time: 23.6 Neg_ll: 147606.05
+log_likelihood_O: 156.2548, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1861, lam * reg_loss: 11.7211
+EPOCH[325/400] Elapsed time: 23.4 Neg_ll: 146948.10
+log_likelihood_O: 156.9453, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2706, lam * reg_loss: 11.6851
+EPOCH[326/400] Elapsed time: 23.4 Neg_ll: 146537.74
+log_likelihood_O: 156.6609, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4057, lam * reg_loss: 11.6581
+EPOCH[327/400] Elapsed time: 23.4 Neg_ll: 146140.11
+log_likelihood_O: 157.0452, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4914, lam * reg_loss: 11.6365
+EPOCH[328/400] Elapsed time: 23.7 Neg_ll: 145838.71
+log_likelihood_O: 156.8109, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5816, lam * reg_loss: 11.6234
+EPOCH[329/400] Elapsed time: 23.7 Neg_ll: 145608.20
+log_likelihood_O: 153.9203, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7307, lam * reg_loss: 11.6184
+EPOCH[330/400] Elapsed time: 23.6 Neg_ll: 145494.54
+log_likelihood_O: 155.6974, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7975, lam * reg_loss: 11.6051
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03493906]), 'recall': array([0.07702855]), 'ndcg': array([0.06379323])}
+EPOCH[331/400] Elapsed time: 23.7 Neg_ll: 145343.84
+log_likelihood_O: 160.9625, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2079, lam * reg_loss: 11.7378
+EPOCH[332/400] Elapsed time: 23.7 Neg_ll: 149955.88
+log_likelihood_O: 157.4224, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0532, lam * reg_loss: 11.7578
+EPOCH[333/400] Elapsed time: 23.6 Neg_ll: 148437.18
+log_likelihood_O: 158.2195, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1016, lam * reg_loss: 11.7441
+EPOCH[334/400] Elapsed time: 23.4 Neg_ll: 147537.54
+log_likelihood_O: 157.2063, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1811, lam * reg_loss: 11.7101
+EPOCH[335/400] Elapsed time: 23.7 Neg_ll: 146978.87
+log_likelihood_O: 157.0058, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2762, lam * reg_loss: 11.6811
+EPOCH[336/400] Elapsed time: 23.5 Neg_ll: 146506.91
+log_likelihood_O: 157.1918, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3944, lam * reg_loss: 11.6634
+EPOCH[337/400] Elapsed time: 23.6 Neg_ll: 146152.56
+log_likelihood_O: 157.6762, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5341, lam * reg_loss: 11.6431
+EPOCH[338/400] Elapsed time: 23.7 Neg_ll: 145893.34
+log_likelihood_O: 155.7026, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6271, lam * reg_loss: 11.6276
+EPOCH[339/400] Elapsed time: 23.7 Neg_ll: 145695.86
+log_likelihood_O: 157.1392, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7184, lam * reg_loss: 11.6174
+EPOCH[340/400] Elapsed time: 23.7 Neg_ll: 145506.75
+log_likelihood_O: 153.5523, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8250, lam * reg_loss: 11.6021
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03505747]), 'recall': array([0.07726624]), 'ndcg': array([0.06406329])}
+EPOCH[341/400] Elapsed time: 23.6 Neg_ll: 145390.33
+log_likelihood_O: 160.7980, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2196, lam * reg_loss: 11.7343
+EPOCH[342/400] Elapsed time: 23.7 Neg_ll: 149796.09
+log_likelihood_O: 156.5184, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1200, lam * reg_loss: 11.7634
+EPOCH[343/400] Elapsed time: 23.4 Neg_ll: 148404.53
+log_likelihood_O: 158.7369, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1305, lam * reg_loss: 11.7441
+EPOCH[344/400] Elapsed time: 23.2 Neg_ll: 147529.99
+log_likelihood_O: 156.2634, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1408, lam * reg_loss: 11.7060
+EPOCH[345/400] Elapsed time: 23.6 Neg_ll: 146905.09
+log_likelihood_O: 156.4554, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2492, lam * reg_loss: 11.6830
+EPOCH[346/400] Elapsed time: 23.5 Neg_ll: 146442.76
+log_likelihood_O: 155.3994, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3899, lam * reg_loss: 11.6559
+EPOCH[347/400] Elapsed time: 23.7 Neg_ll: 146151.28
+log_likelihood_O: 157.5514, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4922, lam * reg_loss: 11.6264
+EPOCH[348/400] Elapsed time: 23.5 Neg_ll: 145892.11
+log_likelihood_O: 157.4631, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5895, lam * reg_loss: 11.6184
+EPOCH[349/400] Elapsed time: 23.5 Neg_ll: 145663.89
+log_likelihood_O: 156.0825, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7170, lam * reg_loss: 11.6097
+EPOCH[350/400] Elapsed time: 23.6 Neg_ll: 145413.89
+log_likelihood_O: 156.5558, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7741, lam * reg_loss: 11.5873
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03513642]), 'recall': array([0.07735245]), 'ndcg': array([0.06447972])}
+EPOCH[351/400] Elapsed time: 23.8 Neg_ll: 145321.28
+log_likelihood_O: 161.6846, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2273, lam * reg_loss: 11.7233
+EPOCH[352/400] Elapsed time: 23.7 Neg_ll: 149918.00
+log_likelihood_O: 156.7683, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0817, lam * reg_loss: 11.7509
+EPOCH[353/400] Elapsed time: 23.5 Neg_ll: 148367.36
+log_likelihood_O: 156.7074, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0708, lam * reg_loss: 11.7386
+EPOCH[354/400] Elapsed time: 23.6 Neg_ll: 147482.74
+log_likelihood_O: 158.6485, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1285, lam * reg_loss: 11.7094
+EPOCH[355/400] Elapsed time: 23.7 Neg_ll: 146869.86
+log_likelihood_O: 156.4967, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2692, lam * reg_loss: 11.6866
+EPOCH[356/400] Elapsed time: 23.7 Neg_ll: 146530.66
+log_likelihood_O: 155.4036, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3916, lam * reg_loss: 11.6602
+EPOCH[357/400] Elapsed time: 23.5 Neg_ll: 146188.67
+log_likelihood_O: 156.3354, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5261, lam * reg_loss: 11.6457
+EPOCH[358/400] Elapsed time: 23.7 Neg_ll: 145877.02
+log_likelihood_O: 156.7070, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6596, lam * reg_loss: 11.6297
+EPOCH[359/400] Elapsed time: 23.8 Neg_ll: 145681.25
+log_likelihood_O: 155.2325, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7717, lam * reg_loss: 11.6140
+EPOCH[360/400] Elapsed time: 23.7 Neg_ll: 145519.00
+log_likelihood_O: 155.5094, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7991, lam * reg_loss: 11.6014
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03497853]), 'recall': array([0.07704346]), 'ndcg': array([0.0642517])}
+EPOCH[361/400] Elapsed time: 23.5 Neg_ll: 145338.40
+log_likelihood_O: 160.7315, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2699, lam * reg_loss: 11.7318
+EPOCH[362/400] Elapsed time: 23.7 Neg_ll: 150035.92
+log_likelihood_O: 161.5310, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1197, lam * reg_loss: 11.7553
+EPOCH[363/400] Elapsed time: 23.7 Neg_ll: 148366.48
+log_likelihood_O: 158.9833, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0956, lam * reg_loss: 11.7279
+EPOCH[364/400] Elapsed time: 23.7 Neg_ll: 147573.59
+log_likelihood_O: 158.3717, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1993, lam * reg_loss: 11.7007
+EPOCH[365/400] Elapsed time: 23.9 Neg_ll: 146944.37
+log_likelihood_O: 156.8652, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3020, lam * reg_loss: 11.6714
+EPOCH[366/400] Elapsed time: 23.8 Neg_ll: 146500.41
+log_likelihood_O: 158.9145, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3978, lam * reg_loss: 11.6439
+EPOCH[367/400] Elapsed time: 23.8 Neg_ll: 146051.77
+log_likelihood_O: 156.4111, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5673, lam * reg_loss: 11.6309
+EPOCH[368/400] Elapsed time: 23.6 Neg_ll: 145920.41
+log_likelihood_O: 157.4010, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6669, lam * reg_loss: 11.6144
+EPOCH[369/400] Elapsed time: 23.6 Neg_ll: 145719.30
+log_likelihood_O: 156.7265, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7336, lam * reg_loss: 11.6018
+EPOCH[370/400] Elapsed time: 23.6 Neg_ll: 145525.67
+log_likelihood_O: 154.9540, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7997, lam * reg_loss: 11.5876
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03514115]), 'recall': array([0.07742366]), 'ndcg': array([0.06436735])}
+EPOCH[371/400] Elapsed time: 23.6 Neg_ll: 145369.60
+log_likelihood_O: 159.3324, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2250, lam * reg_loss: 11.7180
+EPOCH[372/400] Elapsed time: 23.5 Neg_ll: 149947.18
+log_likelihood_O: 157.7050, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0283, lam * reg_loss: 11.7411
+EPOCH[373/400] Elapsed time: 23.7 Neg_ll: 148308.41
+log_likelihood_O: 158.2212, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0819, lam * reg_loss: 11.7286
+EPOCH[374/400] Elapsed time: 23.7 Neg_ll: 147525.27
+log_likelihood_O: 158.0530, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1402, lam * reg_loss: 11.7009
+EPOCH[375/400] Elapsed time: 23.5 Neg_ll: 146926.27
+log_likelihood_O: 156.7338, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2768, lam * reg_loss: 11.6721
+EPOCH[376/400] Elapsed time: 23.5 Neg_ll: 146479.79
+log_likelihood_O: 156.0477, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3883, lam * reg_loss: 11.6528
+EPOCH[377/400] Elapsed time: 23.8 Neg_ll: 146141.13
+log_likelihood_O: 155.8386, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5253, lam * reg_loss: 11.6393
+EPOCH[378/400] Elapsed time: 23.5 Neg_ll: 145870.54
+log_likelihood_O: 153.7601, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6028, lam * reg_loss: 11.6237
+EPOCH[379/400] Elapsed time: 23.5 Neg_ll: 145601.00
+log_likelihood_O: 155.1968, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7101, lam * reg_loss: 11.6119
+EPOCH[380/400] Elapsed time: 23.5 Neg_ll: 145432.53
+log_likelihood_O: 156.9306, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7686, lam * reg_loss: 11.6025
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03494537]), 'recall': array([0.07708509]), 'ndcg': array([0.06411339])}
+EPOCH[381/400] Elapsed time: 23.6 Neg_ll: 145314.49
+log_likelihood_O: 159.6353, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2194, lam * reg_loss: 11.7298
+EPOCH[382/400] Elapsed time: 23.7 Neg_ll: 149870.80
+log_likelihood_O: 157.5840, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0433, lam * reg_loss: 11.7543
+EPOCH[383/400] Elapsed time: 23.4 Neg_ll: 148294.02
+log_likelihood_O: 157.4687, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1189, lam * reg_loss: 11.7416
+EPOCH[384/400] Elapsed time: 23.5 Neg_ll: 147487.19
+log_likelihood_O: 158.0541, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1819, lam * reg_loss: 11.7022
+EPOCH[385/400] Elapsed time: 23.6 Neg_ll: 146908.35
+log_likelihood_O: 156.1389, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3053, lam * reg_loss: 11.6720
+EPOCH[386/400] Elapsed time: 23.6 Neg_ll: 146445.58
+log_likelihood_O: 156.5610, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3981, lam * reg_loss: 11.6512
+EPOCH[387/400] Elapsed time: 23.7 Neg_ll: 146082.06
+log_likelihood_O: 157.3305, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5325, lam * reg_loss: 11.6284
+EPOCH[388/400] Elapsed time: 23.8 Neg_ll: 145876.20
+log_likelihood_O: 159.2755, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6353, lam * reg_loss: 11.6113
+EPOCH[389/400] Elapsed time: 23.7 Neg_ll: 145612.09
+log_likelihood_O: 156.2126, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7109, lam * reg_loss: 11.5946
+EPOCH[390/400] Elapsed time: 23.6 Neg_ll: 145410.72
+log_likelihood_O: 154.7963, log_likelihood_I: 0.0000, anneal_ph *KL: 25.8062, lam * reg_loss: 11.5867
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03508115]), 'recall': array([0.07729446]), 'ndcg': array([0.06434308])}
+EPOCH[391/400] Elapsed time: 23.9 Neg_ll: 145284.50
+log_likelihood_O: 159.3994, log_likelihood_I: 0.0000, anneal_ph *KL: 25.2562, lam * reg_loss: 11.7155
+EPOCH[392/400] Elapsed time: 23.6 Neg_ll: 149754.45
+log_likelihood_O: 157.3788, log_likelihood_I: 0.0000, anneal_ph *KL: 25.0957, lam * reg_loss: 11.7385
+EPOCH[393/400] Elapsed time: 23.8 Neg_ll: 148280.03
+log_likelihood_O: 158.1932, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1158, lam * reg_loss: 11.7249
+EPOCH[394/400] Elapsed time: 23.5 Neg_ll: 147543.70
+log_likelihood_O: 155.8614, log_likelihood_I: 0.0000, anneal_ph *KL: 25.1613, lam * reg_loss: 11.6948
+EPOCH[395/400] Elapsed time: 23.8 Neg_ll: 146839.60
+log_likelihood_O: 156.3010, log_likelihood_I: 0.0000, anneal_ph *KL: 25.3166, lam * reg_loss: 11.6757
+EPOCH[396/400] Elapsed time: 23.9 Neg_ll: 146428.84
+log_likelihood_O: 155.7842, log_likelihood_I: 0.0000, anneal_ph *KL: 25.4582, lam * reg_loss: 11.6453
+EPOCH[397/400] Elapsed time: 23.6 Neg_ll: 146116.67
+log_likelihood_O: 158.1077, log_likelihood_I: 0.0000, anneal_ph *KL: 25.5414, lam * reg_loss: 11.6309
+EPOCH[398/400] Elapsed time: 23.6 Neg_ll: 145816.51
+log_likelihood_O: 154.6132, log_likelihood_I: 0.0000, anneal_ph *KL: 25.6421, lam * reg_loss: 11.6074
+EPOCH[399/400] Elapsed time: 23.8 Neg_ll: 145632.06
+log_likelihood_O: 155.7289, log_likelihood_I: 0.0000, anneal_ph *KL: 25.7357, lam * reg_loss: 11.5943
+[0;30;43m[TEST][0m
+***** test users: 31668
+{'precision': array([0.03497221]), 'recall': array([0.07709008]), 'ndcg': array([0.06426684])}
+EPOCH[400/400] Elapsed time: 23.7 Neg_ll: 145467.76
+best results: {'precision': array([0.03549008]), 'recall': array([0.07801713]), 'ndcg': array([0.06482931])}
+best epoch is: 171
