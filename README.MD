@@ -1,10 +1,3 @@
-#### Update 
-
-#### Update
-
-2022-09-19:
-*  solve the out of memory problem for gram matrix
-
 ## VKDE-pytorch
 
 
@@ -22,7 +15,7 @@ Top-N recommendation is widely accepted as an effective method in personalized s
 
 ## Dataset
 
-We provide three processed datasets: Yelp2018, Amazon-book and Video Games.
+We provide three processed datasets: Yelp2018, Amazon-book and Video Games (the other two datasets will be uploaded soon). 
 
 see more in `dataloader.py`
 
