@@ -24,7 +24,7 @@ def parse_args():
                         help="the fold num used to split large adj matrix, like gowalla")
     parser.add_argument('--testbatch', type=int,default=100,
                         help="the batch size of users for testing")
-    parser.add_argument('--dataset', type=str,default='gowalla',
+    parser.add_argument('--dataset', type=str,default='yelp2018',
                         help="available datasets: [yelp2018, amazon-book, video-games]")
     parser.add_argument('--path', type=str,default="./checkpoints",
                         help="path to save weights")
@@ -38,7 +38,7 @@ def parse_args():
     parser.add_argument('--multicore', type=int, default=0, help='whether we use multiprocessing or not in test')
     parser.add_argument('--pretrain', type=int, default=0, help='whether we use pretrained weight or not')
     parser.add_argument('--seed', type=int, default=2022, help='random seed')
-    parser.add_argument('--model', type=str, default='lgn', help='rec-model')
+    parser.add_argument('--model', type=str, default='VKDE', help='rec-model')
     parser.add_argument('--simple_model', type=str, default='none', help='simple-rec-model, support [none, lgn-ide, gf-cf]')
     parser.add_argument('--enc_dims', type=str, default="[64]", help="layers dimensions of MultVAE")
     parser.add_argument('--kl_anneal', type=float, default=0.2, help="kl annealing, beta for the kl term in the ELBO of MultVAE")

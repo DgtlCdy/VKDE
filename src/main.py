@@ -86,7 +86,7 @@ if __name__ == '__main__':
             else:
                 for epoch in range(world.TRAIN_epochs):
                     t0 = time.time()
-                    batch_loss: dict = Recmodel.train_one_epoch()  
+                    batch_loss: dict = Recmodel.train_one_epoch()
                     elapsed_time = time.time() - t0
                     if (epoch % 10 == 0) or (epoch == world.TRAIN_epochs - 1):
                         cprint("[TEST]")
