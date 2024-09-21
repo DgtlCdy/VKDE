@@ -267,6 +267,7 @@ if args.model in ['VAEplus','VAE_Graph','VKDE','VAEKernelPlus','VAEKernelEmb']:
     config['topK'] = args.topK
     config['kernel'] = args.kernel
     config['sampling'] = args.sampling # if sampling interest from all
+    config['epochs'] = 100 # 新增的，作用待定
 
     if args.act_vae == 'tanh':
         config['act_vae'] = nn.Tanh()

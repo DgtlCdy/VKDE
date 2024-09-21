@@ -52,7 +52,15 @@ class BasicDataset(Dataset):
         it's stupid to return all neg items in super large dataset
         """
         raise NotImplementedError
-    
+
+    def getBipartiteGraph(self):
+        """
+        build a u-i bipartite graph R in torch.sparse.IntTensor.
+        Details in NGCF's matrix form
+        R(m*n) = 1 if interaction or 0 if no interaction.
+        """
+        raise NotImplementedError
+
     def getSparseGraph(self):
         """
         build a graph in torch.sparse.IntTensor.
@@ -322,7 +330,10 @@ class Loader(BasicDataset):
         index = torch.stack([row, col])
         data = torch.FloatTensor(coo.data)
         return torch.sparse.FloatTensor(index, data, torch.Size(coo.shape))
-        
+    
+    def getBipartiteGraph(self):
+        return self.UserItemNet
+
     def getSparseGraph(self):
         print("loading adjacency matrix")
         if self.Graph is None:

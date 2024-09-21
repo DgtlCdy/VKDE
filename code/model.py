@@ -193,7 +193,7 @@ class VKDE(nn.Module):
         self.num_users = self.dataset.n_users
         self.num_items = self.dataset.m_items
 
-        R = self.dataset.UserItemNet.A
+        R = self.dataset.getBipartiteGraph().toarray()
         logging.warning(type(R))
         self.R = torch.tensor(R).float()
 
@@ -508,7 +508,7 @@ class VKDE(nn.Module):
             if self.config['sampling'] == 1:
                 samplingEpoch = 0 
             else:
-                samplingEpoch = self.config.epochs
+                samplingEpoch = self.config['epochs']
 
             if self.epoch >=  samplingEpoch:  #choose sampling or not
                 rating_matrix_batch2 = torch.LongTensor(self.R2[batch_users]).to(world.device)

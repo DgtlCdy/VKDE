@@ -8,7 +8,7 @@ from pprint import pprint
 if world.dataset == 'lastfm':
     dataset = dataloader.LastFM()
 else:
-    dataset = dataloader.Loader(path="../data/"+world.dataset)
+    dataset = dataloader.Loader(path="C:/codes/VKDE/data/"+world.dataset)
 
 print('===========config================')
 pprint(world.config)
