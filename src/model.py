@@ -17,7 +17,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import scipy.sparse as sp
 import numpy as np
-from sparsesvd import sparsesvd
+# from sparsesvd import sparsesvd
 import math
 import os
 import joblib
@@ -35,6 +35,9 @@ class BasicModel(nn.Module):
         super(BasicModel, self).__init__()
     
     def getUsersRating(self, users):
+        raise NotImplementedError
+    
+    def train_one_epoch(self):
         raise NotImplementedError
 
 
@@ -505,10 +508,11 @@ class VKDE(nn.Module):
                 rating_matrix_batch = self.R[batch_users].to(world.device)
 
             
-            if self.config['sampling'] == 1:
+            if self.config['sampling'] == 1: # 采样，以增加性能
                 samplingEpoch = 0 
             else:
-                samplingEpoch = self.config.epochs
+                # samplingEpoch = self.config.epochs
+                samplingEpoch = 1000
 
             if self.epoch >=  samplingEpoch:  #choose sampling or not
                 rating_matrix_batch2 = torch.LongTensor(self.R2[batch_users]).to(world.device)

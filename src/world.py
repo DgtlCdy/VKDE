@@ -14,7 +14,7 @@ os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 args = parse_args()
 
-ROOT_PATH = "/home/hugh/code/VKDE/"  #replace with your ROOT_PATH
+ROOT_PATH = "C:/code/VKDE/"  #replace with your ROOT_PATH
 CODE_PATH = join(ROOT_PATH, 'Others')
 DATA_PATH = join(ROOT_PATH, 'data')
 BOARD_PATH = join(CODE_PATH, 'runs')
