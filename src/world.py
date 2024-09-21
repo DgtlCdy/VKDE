@@ -292,7 +292,8 @@ seed = args.seed
 
 dataset = args.dataset
 simple_model = args.simple_model
-model_name = args.model
+# model_name = args.model
+model_name = 'VKDE'
 if dataset not in all_dataset:
     raise NotImplementedError(f"Haven't supported {dataset} yet!, try {all_dataset}")
 if model_name not in all_models:
