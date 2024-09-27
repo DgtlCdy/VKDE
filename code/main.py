@@ -85,12 +85,16 @@ if __name__ == '__main__':
                 print('best results: %s'%(best_results))
             else:
                 for epoch in range(world.TRAIN_epochs):
+                    utils.print_log(f'start train in epoch-{epoch}') # testonly
                     t0 = time.time()
                     batch_loss: dict = Recmodel.train_one_epoch()  
+                    utils.print_log(f'end train in epoch-{epoch}') # testonly
                     elapsed_time = time.time() - t0
                     if (epoch % 10 == 0) or (epoch == world.TRAIN_epochs - 1):
                         cprint("[TEST]")
-                        results = Procedure.Test(dataset, Recmodel, epoch, w, world.config['multicore']) 
+                        utils.print_log(f'start Test in epoch-{epoch}') # testonly
+                        results = Procedure.Test(dataset, Recmodel, epoch, w, world.config['multicore'])
+                        utils.print_log(f'end Test in epoch-{epoch}') # testonly
                         if results['recall'][0] > best_results['recall'][0]:
                             best_results = results
                             best_epoch = epoch
@@ -105,6 +109,7 @@ if __name__ == '__main__':
                             pass
                     else:
                         print(f'EPOCH[{epoch+1}/{world.TRAIN_epochs}] Elapsed time: {elapsed_time}')
+                    utils.print_log(f'end for in epoch-{epoch}') # testonly
 
                 print('best results: %s'%(best_results))
                 print('best epoch is: %s'%(best_epoch+1))

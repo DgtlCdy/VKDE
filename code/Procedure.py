@@ -24,6 +24,7 @@ CORES = multiprocessing.cpu_count() // 2
 
 
 def BPR_train_original(dataset, recommend_model, loss_class, epoch, neg_k=1, w=None):
+    utils.print_log(f'start of BPR_train_original') # testonly
     Recmodel = recommend_model
     Recmodel.train()
     bpr: utils.BPRLoss = loss_class
@@ -54,10 +55,12 @@ def BPR_train_original(dataset, recommend_model, loss_class, epoch, neg_k=1, w=N
     aver_loss = aver_loss / total_batch
     time_info = timer.dict()
     timer.zero()
+    utils.print_log(f'end of BPR_train_original') # testonly
     return f"loss{aver_loss:.3f}-{time_info}"
     
     
 def test_one_batch(X):
+    utils.print_log(f'start of test_one_batch') # testonly
     sorted_items = X[0].numpy()
     groundTrue = X[1]
     r = utils.getLabel(groundTrue, sorted_items)
@@ -67,12 +70,14 @@ def test_one_batch(X):
         pre.append(ret['precision'])
         recall.append(ret['recall'])
         ndcg.append(utils.NDCGatK_r(groundTrue,r,k))
+    utils.print_log(f'end of test_one_batch') # testonly
     return {'recall':np.array(recall), 
             'precision':np.array(pre), 
             'ndcg':np.array(ndcg)}
         
             
 def Test(dataset, Recmodel, epoch, w=None, multicore=0):
+    utils.print_log(f'start of Test, epoch-{epoch}') # testonly
     u_batch_size = world.config['test_u_batch_size']
     dataset: utils.BasicDataset
     testDict: dict = dataset.testDict
@@ -146,11 +151,16 @@ def Test(dataset, Recmodel, epoch, w=None, multicore=0):
         if multicore == 1:
             pool.close()
         print(results)
+        utils.print_log(f'end of Test, epoch-{epoch}') # testonly
+        with open('C:/test_results/VKDE_gowalla_base.txt', 'a') as file_test_result:
+            print(f'{epoch}th epoch test result:', file=file_test_result)
+            print(results, file=file_test_result)
         return results
 
 
 
 def Test_sim(dataset, Recmodel, epoch, w=None, multicore=0):
+    utils.print_log(f'start of Test, epoch-{epoch}') # testonly
     u_batch_size = world.config['test_u_batch_size']
     dataset: utils.BasicDataset
     testDict: dict = dataset.testDict
@@ -237,6 +247,7 @@ def Test_sim(dataset, Recmodel, epoch, w=None, multicore=0):
         return 0
 
 def Test_Diff_Users(dataset, Recmodel, epoch, w=None, multicore=0):
+    utils.print_log(f'start of Test, epoch-{epoch}') # testonly
     u_batch_size = world.config['test_u_batch_size']
     dataset: utils.BasicDataset
     testDict: dict = dataset.testDict
@@ -349,6 +360,7 @@ def Test_Diff_Users(dataset, Recmodel, epoch, w=None, multicore=0):
         return results_groups, group_line
 
 def Test_Embeddings(dataset, Recmodel, epoch, w=None, multicore=0):
+    utils.print_log(f'start of Test, epoch-{epoch}') # testonly
     u_batch_size = world.config['test_u_batch_size']
     dataset: utils.BasicDataset
     testDict: dict = dataset.testDict
@@ -439,4 +451,7 @@ def Test_Embeddings(dataset, Recmodel, epoch, w=None, multicore=0):
         if multicore == 1:
             pool.close()
         print(results)
+        with open('C:/test_results/VKDE_gowalla_base.txt', 'a') as file_test_result:
+            print(f'{epoch}th epoch test result:', file=file_test_result)
+            print(results, file=file_test_result)
         return results

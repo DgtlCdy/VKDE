@@ -67,6 +67,6 @@ def parse_args():
                         help="select topK items to  calculate softmax")
     parser.add_argument('--kernel', type=str, default='gram',
                         help="kernel function, support [gram, cos, emb]")
-    parser.add_argument('--sampling', type=int, default=0)
+    parser.add_argument('--sampling', type=int, default=1)
                     
     return parser.parse_args()
