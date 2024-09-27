@@ -17,12 +17,13 @@ import torch.nn.functional as F
 import torch.optim as optim
 import scipy.sparse as sp
 import numpy as np
-from sparsesvd import sparsesvd
+# from sparsesvd import sparsesvd
 import math
 import os
 import joblib
 from tqdm import tqdm
 import pickle
+import utils
 
 import random
 import logging
@@ -193,7 +194,7 @@ class VKDE(nn.Module):
         self.num_users = self.dataset.n_users
         self.num_items = self.dataset.m_items
 
-        R = self.dataset.UserItemNet.A
+        R = self.dataset.getBipartiteGraph().toarray()
         logging.warning(type(R))
         self.R = torch.tensor(R).float()
 
@@ -255,6 +256,7 @@ class VKDE(nn.Module):
     
     #ideology：calculate local interaction，forward learning，combine local distribution
     def forward_kernel_1226(self, rating_matrix_batch, rating_matrix_batch2=None):
+        utils.print_log(f'start of forward_kernel_1226') # testonly
         batch_input0 = F.normalize(rating_matrix_batch, p=2, dim=1).cpu()
         batch_input0 = F.dropout(batch_input0, p=self.dropout, training=self.training)
 
@@ -392,6 +394,7 @@ class VKDE(nn.Module):
         return z, new_output, kl, batch_input0 
 
     def getUsersRating(self, users):
+        utils.print_log(f'start of getUsersRating') # testonly
         self.eval()
         users = users.cpu()
         test_batch_size = users.shape[0]
@@ -446,6 +449,7 @@ class VKDE(nn.Module):
 
             self.R2[user] = tmp[0]
 
+        utils.print_log(f'end of getUsersRating') # testonly
         return predict_out
 
 
@@ -480,6 +484,7 @@ class VKDE(nn.Module):
         return reg
 
     def train_one_epoch(self):
+        utils.print_log(f'start of train_one_epoch') # testonly
         self.train()
         users = np.arange(self.num_users)
         batch_size = self.config['vae_batch_size']
@@ -508,7 +513,7 @@ class VKDE(nn.Module):
             if self.config['sampling'] == 1:
                 samplingEpoch = 0 
             else:
-                samplingEpoch = self.config.epochs
+                samplingEpoch = self.config['epochs']
 
             if self.epoch >=  samplingEpoch:  #choose sampling or not
                 rating_matrix_batch2 = torch.LongTensor(self.R2[batch_users]).to(world.device)
@@ -541,6 +546,7 @@ class VKDE(nn.Module):
         loss_dict['neg_ll'] = neg_ll_list
         loss_dict['kl'] = kl_list
         loss_dict['reg'] =  reg_list
+        utils.print_log(f'end of train_one_epoch') # testonly
         return loss_dict
 
     
@@ -548,6 +554,7 @@ class VKDE(nn.Module):
         """
         For every item, get its topk similar items according to the co-occurrent matrix.
         """
+        utils.print_log(f'start of get_topk_ii') # testonly
         save_path = f'./pretrained/{world.dataset}/{world.model_name}'
         ii_sim_mat_path = save_path + '/ii_sim_mat_'+ str(self.topk) +'.pkl'
         ii_sim_idx_mat_path = save_path + '/ii_sim_idx_mat_'+ str(self.topk) +'.pkl'
