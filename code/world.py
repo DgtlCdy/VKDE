@@ -255,7 +255,7 @@ if args.model in ['VAEplus','VAE_Graph','VKDE','VAEKernelPlus','VAEKernelEmb']:
     if args.dataset == "amazon-book":
         config['vae_batch_size'] = 32 # default 256
     else:
-        config['vae_batch_size'] = 64 # default 256
+        config['vae_batch_size'] = 32 # default 256
     config['vae_reg_param'] = args.reg_model2 # default 0.001
     config['kl_anneal'] = args.kl_anneal # default 0.2
     config['enc_dims'] = args.enc_dims # default [64]

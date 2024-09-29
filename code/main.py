@@ -34,7 +34,7 @@ if __name__ == '__main__':
     if world.LOAD:
         try:
             Recmodel.load_state_dict(torch.load(weight_file,map_location=torch.device('cpu')))
-            Recmodel.get_topk_ii()
+            # Recmodel.get_topk_ii() # 这里是不是重复了？
             world.cprint(f"loaded model weights from {weight_file}")
         except FileNotFoundError:
             print(f"{weight_file} not exists, start from beginning")
@@ -84,6 +84,7 @@ if __name__ == '__main__':
                     torch.save(Recmodel.state_dict(), weight_file)    
                 print('best results: %s'%(best_results))
             else:
+                # 开始训练
                 for epoch in range(world.TRAIN_epochs):
                     utils.print_log(f'start train in epoch-{epoch}') # testonly
                     t0 = time.time()
