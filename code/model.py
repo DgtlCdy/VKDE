@@ -270,8 +270,7 @@ class VKDE(nn.Module):
 
     #ideology：calculate local interaction，forward learning，combine local distribution
     def forward_kernel_1226(self, rating_matrix_batch, rating_matrix_batch2=None):
-        utils.print_log(f'start of forward_kernel_1226') # testonly
-        utils.print_log(f"Memory Usage: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
+        utils.print_log(f'Start of forward_kernel_1226, Memory allocated {torch.cuda.memory_allocated()/1024**3:.2f}GB.') # testonly
         batch_input0 = F.normalize(rating_matrix_batch, p=2, dim=1)
         batch_input0 = F.dropout(batch_input0, p=self.dropout, training=self.training)
 
@@ -366,8 +365,7 @@ class VKDE(nn.Module):
 
     #Sample one interest
     def forward_kernel(self, rating_matrix_batch, rating_matrix_batch2=None):
-        utils.print_log(f'start of forward_kernel') # testonly
-        utils.print_log(f"Memory Usage: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
+        utils.print_log(f'Start of forward_kernel, Memory allocated {torch.cuda.memory_allocated()/1024**3:.2f}GB.') # testonly
         batch_input0 = F.normalize(rating_matrix_batch, p=2, dim=1)
         batch_input0 = F.dropout(batch_input0, p=self.dropout, training=self.training)
 

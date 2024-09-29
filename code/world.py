@@ -9,16 +9,25 @@ from torch import nn
 from enum import Enum
 from parse import parse_args
 import multiprocessing
+import platform
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 args = parse_args()
 
-ROOT_PATH = os.path.dirname(os.path.dirname(__file__))
+# ROOT_PATH = os.path.dirname(os.path.dirname(__file__))
+if platform.system() == 'Windows':
+    ROOT_PATH = 'C:/codes/VKDE'
+else:
+    ROOT_PATH = '/data0/dengchao/VKDE'
+
 CODE_PATH = join(ROOT_PATH, 'code')
 DATA_PATH = join(ROOT_PATH, 'data')
+LOG_PATH = (ROOT_PATH, 'log')
+TEST_RESULT_PATH = (ROOT_PATH, 'test_result')
 BOARD_PATH = join(CODE_PATH, 'runs')
 FILE_PATH = join(CODE_PATH, 'checkpoints')
+
 import sys
 sys.path.append(join(CODE_PATH, 'sources'))
 

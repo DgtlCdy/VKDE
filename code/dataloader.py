@@ -217,7 +217,7 @@ class Loader(BasicDataset):
     gowalla dataset
     """
 
-    def __init__(self,config = world.config,path="C:/codes/VKDE/data/yelp2018"):
+    def __init__(self,config = world.config,path=world.ROOT_PATH+'/data/yelp2018'):
         # train or test
         cprint(f'loading [{path}]')
         self.split = config['A_split']

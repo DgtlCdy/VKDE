@@ -25,7 +25,7 @@ def parse_args():
                         help="the batch size for bpr loss training procedure")
     parser.add_argument('--a_fold', type=int,default=100,
                         help="the fold num used to split large adj matrix, like gowalla")
-    parser.add_argument('--testbatch', type=int,default=128,
+    parser.add_argument('--testbatch', type=int,default=128, # 4080跑128的yelp2018刚好溢出，5s-2min一个batch不够稳定
                         help="the batch size of users for testing")
     parser.add_argument('--path', type=str,default="./checkpoints",
                         help="path to save weights")

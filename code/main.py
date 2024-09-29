@@ -91,7 +91,7 @@ if __name__ == '__main__':
                     batch_loss: dict = Recmodel.train_one_epoch()  
                     utils.print_log(f'end train in epoch-{epoch}') # testonly
                     elapsed_time = time.time() - t0
-                    if (epoch % 20 == 0) or (epoch == world.TRAIN_epochs - 1):
+                    if (epoch % 50 == 0) or (epoch == world.TRAIN_epochs - 1):
                         cprint("[TEST]")
                         utils.print_log(f'start Test in epoch-{epoch}') # testonly
                         results = Procedure.Test(dataset, Recmodel, epoch, w, world.config['multicore'])
