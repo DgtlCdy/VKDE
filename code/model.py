@@ -49,7 +49,7 @@ class MultVAE(BasicModel):
         self.dataset = dataset
 
         R = self.dataset.UserItemNet.A
-        self.R = torch.tensor(R).float()
+        self.R = torch.tensor(R).float().to(world.device)
 
         self.lam = self.config['vae_reg_param']
         self.anneal_ph = self.config['kl_anneal']
@@ -198,6 +198,9 @@ class VKDE(nn.Module):
         logging.warning(type(R))
         self.R = torch.tensor(R).float()
 
+        # dengchao: 为每一个用户分配一个物品，不管是不是交互过
+        # 允许重复抽取物品id
+        # 这个是用于采样的
         self.R2 = np.random.choice(range(self.num_items), self.num_users)
 
         self.lam = self.config['vae_reg_param']
@@ -207,66 +210,79 @@ class VKDE(nn.Module):
         self.dropout = config['dropout_model2']
         self.normalize = config['normalize_model2']
         self.topk = config['topK_model3']
+        self.epoch = 0 # 记录每次训练时的epoch，用于判断采样
 
         enc_dims = self.config['enc_dims']
         if isinstance(enc_dims, str):
             enc_dims = eval(enc_dims)
         dec_dims = enc_dims[::-1]
 
+
+        # dengchao：构建前传的encoder，似乎VKDE没有使用decoder
+        # 分裂层不用激活函数？直接获取均值和方差
+        # 感觉可以优化为：在forward的时候使用激活函数？不过在这里也很好
         enc_dims = [self.num_items] + enc_dims
         dec_dims = dec_dims + [self.num_items]
-
         self.encoder = nn.Sequential()
         for i, (in_dim, out_dim) in enumerate(zip(enc_dims[:-1], enc_dims[1:])):
+            # 在倒数第二层分裂开，一半均值，一半方差
             if i == len(enc_dims) - 2:
                 out_dim = out_dim * 2
             self.encoder.add_module(name='Encoder_Linear_%s'%i, module=nn.Linear(in_dim, out_dim))
             if i != len(enc_dims) - 2:
                 self.encoder.add_module(name='Encoder_Activation_%s'%i, module=self.act)
+                # 激活函数act默认tanh
                 pass
 
         self.mapper = nn.Linear(enc_dims[-1], 1)  
 
+        # 随机生成标准高斯分布，维度默认64
         self.items = nn.parameter.Parameter(torch.randn(self.num_items, enc_dims[-1]))
         self.items_weight = nn.parameter.Parameter(torch.randn(self.num_items, enc_dims[-1]))
- 
+
+        # 初始化待优化的参数、
         self.init_param()
         self.init_optim()
 
-        self.get_topk_ii()
+        # 获取每一个i的最相似矩阵
+        self.gram_matrix, self.ii_sim_mat, self.ii_sim_idx_mat = self.get_topk_ii()
+        
 
-        if world.dataset in ['amazon-book', 'ml-20m']:
-            self.gram_matrix = torch.tensor(self.gram_matrix).float()
-        else:
-            self.gram_matrix = torch.tensor(self.gram_matrix).float().to(world.device)
-        self.epoch = 0
-    
+        # dengchao：这是因为大的数据源会爆显存？
+        # if world.dataset in ['amazon-book', 'ml-20m']:
+        #     self.gram_matrix = torch.tensor(self.gram_matrix).float()
+        # else:
+        #     self.gram_matrix = torch.tensor(self.gram_matrix).float().to(world.device)
+        self.gram_matrix = torch.tensor(self.gram_matrix).float().to(world.device)
+
+    # dengchao: 对全部要学习的参数做随机初始化
     def init_param(self):
         for m in self.modules():
             if isinstance(m, nn.Linear):
                 nn.init.xavier_normal_(m.weight)
                 if isinstance(m.bias, torch.Tensor):
-                    nn.init.trunc_normal_(m.bias, std=0.001)
+                    nn.init.trunc_normal_(m.bias, std=0.001) # 带有截断边界
         nn.init.xavier_normal_(self.items)
-        
-    
+
+    # 初始化优化器，传入学习率
     def init_optim(self):
         self.optim = optim.Adam([param for param in self.parameters() if param.requires_grad], self.config['vae_lr'])
-    
-    
+
     #ideology：calculate local interaction，forward learning，combine local distribution
     def forward_kernel_1226(self, rating_matrix_batch, rating_matrix_batch2=None):
-        utils.print_log(f'start of forward_kernel_1226') # testonly
-        batch_input0 = F.normalize(rating_matrix_batch, p=2, dim=1).cpu()
+        utils.print_log(f'Start of forward_kernel_1226, Memory allocated {torch.cuda.memory_allocated()/1024**3:.2f}GB.') # testonly
+        batch_input0 = F.normalize(rating_matrix_batch, p=2, dim=1)
         batch_input0 = F.dropout(batch_input0, p=self.dropout, training=self.training)
 
-        if world.dataset in ['amazon-book', 'ml-20m']:
-            zeros = torch.zeros(rating_matrix_batch.shape[1]) 
-            ones = torch.ones(rating_matrix_batch.shape[1])
-        else:
-            batch_input0 = batch_input0.to(world.device)
-            zeros = torch.zeros(rating_matrix_batch.shape[1]).to(world.device)
-            ones = torch.ones(rating_matrix_batch.shape[1]).to(world.device)
+        # if world.dataset in ['amazon-book', 'ml-20m']:
+        #     zeros = torch.zeros(rating_matrix_batch.shape[1])
+        #     ones = torch.ones(rating_matrix_batch.shape[1])
+        # else:
+        #     batch_input0 = batch_input0.to(world.device)
+        #     zeros = torch.zeros(rating_matrix_batch.shape[1]).to(world.device)
+        #     ones = torch.ones(rating_matrix_batch.shape[1]).to(world.device)
+        zeros = torch.zeros(rating_matrix_batch.shape[1]).to(world.device)
+        ones = torch.ones(rating_matrix_batch.shape[1]).to(world.device)
 
         batch_input01 = torch.where(batch_input0>0, ones, zeros)  #dropout rating_matrix_batch
         batch_input_arr = []   #record multiple local interactions
@@ -279,21 +295,19 @@ class VKDE(nn.Module):
             else:
                 items = torch.nonzero(user_input).cpu().numpy()
             items = items.reshape(-1)
-
             # deal with no interaction
             if len(items) == 0:
                 items = np.random.choice(range(self.num_items), 30)
-           
+
             logging.warning('user:{0}, items:{1},{2}'.format(user, items, batch_input01.shape[0]))
             item_similars_sampled = self.gram_matrix[items] 
             input_item_sampled = item_similars_sampled * user_input
             input_item_sampled = F.normalize(input_item_sampled, p=1, dim=1)
             batch_input_arr.append(input_item_sampled)
-            
             batch_input_num.append(len(items))
-        
-        new_input = torch.cat(batch_input_arr, dim =0).to(world.device)
-        batch_input0 = F.normalize(new_input, p=2, dim=1)
+
+        new_input = torch.cat(batch_input_arr, dim=0).to(world.device) # dengchao: 这里会爆显存
+        batch_input0 = F.normalize(new_input, p=2, dim=1) # 这里也分配了很多内存
 
         #encoder and decoder
         x = self.encoder(batch_input0)
@@ -303,18 +317,17 @@ class VKDE(nn.Module):
         if self.training:
             z = mean + epsilon * stddev
         else:
+            self.optim.zero_grad()
             z = mean
 
         logging.warning(z.shape)
-        dot_product = z @ self.items.T
+        # dot_product = z @ self.items.T # 获取单个兴趣和物品embedding的内积，但是没有正则化
 
         try:
             if self.normalize:
                 out = F.normalize(z)@ (F.normalize(self.items).T)  / self.tau #- self.popularity
-            
             else:
                 out = z @ self.items.T 
-
         except Exception as e :
             print(e)
             print("new_input.shape:", new_input.shape)
@@ -340,10 +353,19 @@ class VKDE(nn.Module):
         var_square = torch.exp(logvar)
         kl = 0.5 * torch.mean(torch.sum(mean ** 2 + var_square - 1. - logvar, dim=-1))
 
-        return z, new_output, kl, batch_input0 
+        # 清除占用大的变量
+        time.sleep(1)
+        if self.training:
+            return z, new_output, kl, batch_input0
+        else:
+            import gc
+            del new_input, batch_input0, z, kl, zeros, ones, batch_input_arr, batch_input_num, out
+            gc.collect()
+            return 0, new_output, 0, 0
 
     #Sample one interest
     def forward_kernel(self, rating_matrix_batch, rating_matrix_batch2=None):
+        utils.print_log(f'Start of forward_kernel, Memory allocated {torch.cuda.memory_allocated()/1024**3:.2f}GB.') # testonly
         batch_input0 = F.normalize(rating_matrix_batch, p=2, dim=1)
         batch_input0 = F.dropout(batch_input0, p=self.dropout, training=self.training)
 
@@ -378,52 +400,51 @@ class VKDE(nn.Module):
         try:
             if self.normalize:
                 out = F.normalize(z)@ (F.normalize(self.items).T)  / self.tau 
-            
             else:
                 out = z @ self.items.T 
-
         except Exception as e :
             print(e)
-            print("new_input.shape:", new_input.shape)
+            # print("new_input.shape:", new_input.shape) # dengchao：无效，注释掉
 
         new_output = out
 
         var_square = torch.exp(logvar)
         kl = 0.5 * torch.mean(torch.sum(mean ** 2 + var_square - 1. - logvar, dim=-1))
 
+
+        time.sleep(0.1)
+        import gc
+        del zeros, ones, out, var_square
+        gc.collect()
+
         return z, new_output, kl, batch_input0 
 
+    # 这个函数只被测试调用，因此不需要算梯度
     def getUsersRating(self, users):
-        utils.print_log(f'start of getUsersRating') # testonly
         self.eval()
         users = users.cpu()
         test_batch_size = users.shape[0]
-        
 
         if world.dataset in ['amazon-book', 'ml-20m']:  #hard to load into GPU
-            rating_matrix_batch = self.R[users]
+            pass
+            # rating_matrix_batch = self.R[users]
+            # batch_size = int(self.config['vae_batch_size']/4)
+            # num_users = len(rating_matrix_batch)
+            # n_batch = math.ceil(num_users / batch_size)
+            # predict_out_arr = []
 
-            batch_size = int(self.config['vae_batch_size']/4)
-            num_users = len(rating_matrix_batch)
-            n_batch = math.ceil(num_users / batch_size)
-            predict_out_arr = []
+            # torch.autograd.set_detect_anomaly(True)
+            # for idx in range(n_batch):
+            #     start_idx = idx * batch_size
+            #     end_idx = min(start_idx + batch_size, num_users)
+            #     batch_users = users[start_idx:end_idx]
 
-            torch.autograd.set_detect_anomaly(True)
-            for idx in range(n_batch):
+            #     rating_matrix_batch = self.R[batch_users]
+            #     _, predict_out, kl, _ = self.forward_kernel_1226(rating_matrix_batch)
+            #     predict_out_arr.append(predict_out)
 
-                start_idx = idx * batch_size
-                end_idx = min(start_idx + batch_size, num_users)
-                batch_users = users[start_idx:end_idx]
-
-                rating_matrix_batch = self.R[batch_users]
-
-                _, predict_out, kl, _ = self.forward_kernel_1226(rating_matrix_batch)
-                
-                predict_out_arr.append(predict_out)
-
-            predict_out = torch.cat(predict_out_arr, dim =0).to(world.device)
-            rating_matrix_batch = self.R[users].to(world.device) 
-
+            # predict_out = torch.cat(predict_out_arr, dim =0).to(world.device)
+            # rating_matrix_batch = self.R[users].to(world.device) 
         else:
             rating_matrix_batch = self.R[users].to(world.device)
             _, predict_out, _, _ = self.forward_kernel_1226(rating_matrix_batch)
@@ -497,41 +518,49 @@ class VKDE(nn.Module):
         self.epoch += 1
 
         torch.autograd.set_detect_anomaly(True)
-        for idx in range(n_batch):
 
+        # 进入一次训练
+        for idx in range(n_batch):
             start_idx = idx * batch_size
             end_idx = min(start_idx + batch_size, self.num_users)
             batch_users = users[start_idx:end_idx]
 
-            if world.dataset in ['amazon-book', 'ml-20m']: #especially deal with the two large datasets
-                rating_matrix_batch = self.R[batch_users].to(world.device)
-                num_users = len(rating_matrix_batch)
-            else:
-                rating_matrix_batch = self.R[batch_users].to(world.device)
-
+            # if world.dataset in ['amazon-book', 'ml-20m']: #especially deal with the two large datasets
+            #     rating_matrix_batch = self.R[batch_users].to(world.device)
+            #     num_users = len(rating_matrix_batch)
+            # else:
+            #     rating_matrix_batch = self.R[batch_users].to(world.device)
+            # dengchao：注释掉暂时无意义的代码
+            rating_matrix_batch = self.R[batch_users].to(world.device)
             
-            if self.config['sampling'] == 1:
-                samplingEpoch = 0 
-            else:
-                samplingEpoch = self.config['epochs']
+            # if self.config['sampling'] == 1:
+            #     samplingEpoch = 0 
+            # else:
+            #     samplingEpoch = self.config['epochs']
+            # samplingEpoch = 10
+            # if self.epoch >=  samplingEpoch:  #choose sampling or not
+            #     rating_matrix_batch2 = torch.LongTensor(self.R2[batch_users]).to(world.device)
+            #     _, predict_out, kl, _ = self.forward_kernel(rating_matrix_batch, rating_matrix_batch2)
+            # else:
+            #     _, predict_out, kl, _ = self.forward_kernel_1226(rating_matrix_batch)
+            # 
+            # dengchao：先硬性规定全程用采样策略
+            rating_matrix_batch2 = torch.LongTensor(self.R2[batch_users]).to(world.device)
+            _, predict_out, kl, _ = self.forward_kernel(rating_matrix_batch, rating_matrix_batch2)
 
-            if self.epoch >=  samplingEpoch:  #choose sampling or not
-                rating_matrix_batch2 = torch.LongTensor(self.R2[batch_users]).to(world.device)
-                _, predict_out, kl, _ = self.forward_kernel(rating_matrix_batch, rating_matrix_batch2)
-            else:
-                _, predict_out, kl, _ = self.forward_kernel_1226(rating_matrix_batch)
+            # dengchao：注释掉暂时无意义的代码
+            # if world.dataset in ['amazon-book', 'ml-20m']:  #especially deal with the two large datasets
+            #     rating_matrix_batch = self.R[batch_users].to(world.device)
 
-
-            if world.dataset in ['amazon-book', 'ml-20m']:  #especially deal with the two large datasets
-                rating_matrix_batch = self.R[batch_users].to(world.device)
-            
             neg_ll, log_likelihood_O, log_likelihood_I = self.calculate_mult_log_likelihood_simple(predict_out, rating_matrix_batch)  #self.PRINT 传递epoch信息
             
             #############################################################################
+            # 这里算损失函数和优化，anneal_ph默认0.2，三者分别是重建损失、先验匹配、L2正则化损失
             loss = neg_ll + self.anneal_ph * kl + self.lam * self.reg_loss()
             self.optim.zero_grad()
             loss.backward()
             self.optim.step()
+            # dengchao：这里就结束了，后面都是记录数据的代码
 
             if idx == n_batch - 1:
                 print('log_likelihood_O: %.4f'%(log_likelihood_O.item()-log_likelihood_I.item()), end=", ")
@@ -564,52 +593,52 @@ class VKDE(nn.Module):
                 os.makedirs(save_path)
             adj_mat = self.dataset.UserItemNet
             row_sum = np.array(adj_mat.sum(axis=1))
-            d_inv = np.power(row_sum, -0.5).flatten()
+            d_inv = np.power(row_sum, -0.5).flatten() #根号度分之一
             d_inv[np.isposinf(d_inv)] = 0.
-            d_mat = sp.diags(d_inv)
+            d_mat = sp.diags(d_inv) # 对角的度矩阵
             norm_mat = d_mat.dot(adj_mat)
             col_sum = np.array(adj_mat.sum(axis=0))
             d_inv = np.power(col_sum, -0.5).flatten()
             d_inv[np.isposinf(d_inv)] = 0.
             d_mat = sp.diags(d_inv)
-            norm_mat = norm_mat.dot(d_mat).astype(np.float32)
-
-            gram_matrix = norm_mat.T.dot(norm_mat).toarray()
-
+            norm_mat = norm_mat.dot(d_mat.toarray()).astype(np.float32)
+            # 自乘，shape是num_items*num_items
+            # 每一个位置是两个物品向量的内积代表其相似度，并在这之前做了度的归一化处理，除了两个物品根号度和所有用户的度
+            gram_matrix = norm_mat.T.dot(norm_mat).toarray() 
             print("Successfully created the co-occurrence matrix!")
-            self.ii_sim_mat = torch.zeros(self.num_items, self.topk)
-            self.ii_sim_idx_mat = torch.zeros(self.num_items, self.topk)
+
+            # 取前topk个相似度最大的元素排序，idx_mat是对方item的id，mat是对应相似度值
+            ii_sim_mat = torch.zeros(self.num_items, self.topk)
+            ii_sim_idx_mat = torch.zeros(self.num_items, self.topk)
             for iid in range(self.num_items):
                 row = torch.from_numpy(gram_matrix[iid])
                 sim, idx = torch.topk(row, self.topk)
-                self.ii_sim_mat[iid] = sim
-                self.ii_sim_idx_mat[iid] = idx
+                ii_sim_mat[iid] = sim
+                ii_sim_idx_mat[iid] = idx
                 if iid % 15000 == 0:
-                    print('Getting {} items\' topk done'.format(iid))
-            self.ii_sim_mat = self.ii_sim_mat
-            self.ii_sim_idx_mat = self.ii_sim_idx_mat.numpy()
-            self.gram_matrix = gram_matrix
+                    print(f'Getting {format(iid)} items topk done')
+
+            gram_matrix = gram_matrix
+            ii_sim_mat = self.ii_sim_mat
+            ii_sim_idx_mat = self.ii_sim_idx_mat.numpy()
+            joblib.dump(gram_matrix, gram_matrix_path, compress=3)
             joblib.dump(self.ii_sim_mat, ii_sim_mat_path, compress=3)
             joblib.dump(self.ii_sim_idx_mat, ii_sim_idx_mat_path, compress=3)
-            joblib.dump(gram_matrix, gram_matrix_path, compress=3)
         else:
-            self.ii_sim_mat = joblib.load(ii_sim_mat_path)
-            self.ii_sim_idx_mat = joblib.load(ii_sim_idx_mat_path)
-            self.gram_matrix = joblib.load(gram_matrix_path)
+            gram_matrix = joblib.load(gram_matrix_path)
+            ii_sim_mat = joblib.load(ii_sim_mat_path)
+            ii_sim_idx_mat = joblib.load(ii_sim_idx_mat_path)
 
         if world.LOAD ==1:  
             weight_len = self.encoder[0].weight.shape[0]//2
             print(weight_len)
-            gram_matrix = self.encoder[0].weight[:weight_len,:].T.mm(self.encoder[0].weight[:weight_len,:])   
-
+            gram_matrix = self.encoder[0].weight[:weight_len,:].T.mm(self.encoder[0].weight[:weight_len,:])
             try:
                 f = open("items_embedding_VKDE.pkl",'rb+')
                 item_embedding = pickle.load(f)
                 gram_matrix = torch.from_numpy(item_embedding.dot(item_embedding.T))
-        
-                self.gram_matrix = gram_matrix
-
                 print(gram_matrix.cpu().shape, self.items.shape)
-
             except: 
                 print("EOFError!")
+
+        return gram_matrix, ii_sim_mat, ii_sim_idx_mat

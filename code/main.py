@@ -23,6 +23,8 @@ print(">>SEED:", world.seed)
 # ==============================
 import register as register
 from register import dataset
+import model
+
 
 if __name__ == '__main__':
     Recmodel = register.MODELS[world.model_name](world.config, dataset)
@@ -34,7 +36,7 @@ if __name__ == '__main__':
     if world.LOAD:
         try:
             Recmodel.load_state_dict(torch.load(weight_file,map_location=torch.device('cpu')))
-            Recmodel.get_topk_ii()
+            # Recmodel.get_topk_ii() # 这里是不是重复了？
             world.cprint(f"loaded model weights from {weight_file}")
         except FileNotFoundError:
             print(f"{weight_file} not exists, start from beginning")
@@ -59,7 +61,6 @@ if __name__ == '__main__':
             epoch = 0
             cprint("[TEST]")
             adj_mat = dataset.UserItemNet.tolil()
-            import model
             if(world.simple_model == 'lgn-ide'):
                 lm = model.LGCN_IDE(adj_mat)
                 lm.train()
@@ -69,10 +70,9 @@ if __name__ == '__main__':
             def ensure_dirs(path):
                 if not os.path.exists(path):
                     os.makedirs(path)
-            Procedure.Test(dataset, lm, epoch, w, world.config['multicore'])   
-
+            Procedure.Test(dataset, lm, epoch, w, world.config['multicore'])
         else:  
-            if world.model_name == 'lgn':  
+            if world.model_name == 'lgn':
                 for epoch in range(world.TRAIN_epochs):
                     if epoch %10 == 0:
                         cprint("[TEST]")
@@ -84,13 +84,14 @@ if __name__ == '__main__':
                     torch.save(Recmodel.state_dict(), weight_file)    
                 print('best results: %s'%(best_results))
             else:
+                # 开始训练
                 for epoch in range(world.TRAIN_epochs):
                     utils.print_log(f'start train in epoch-{epoch}') # testonly
                     t0 = time.time()
                     batch_loss: dict = Recmodel.train_one_epoch()  
                     utils.print_log(f'end train in epoch-{epoch}') # testonly
                     elapsed_time = time.time() - t0
-                    if (epoch % 10 == 0) or (epoch == world.TRAIN_epochs - 1):
+                    if (epoch % 50 == 0) or (epoch == world.TRAIN_epochs - 1):
                         cprint("[TEST]")
                         utils.print_log(f'start Test in epoch-{epoch}') # testonly
                         results = Procedure.Test(dataset, Recmodel, epoch, w, world.config['multicore'])

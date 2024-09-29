@@ -152,15 +152,11 @@ def Test(dataset, Recmodel, epoch, w=None, multicore=0):
             pool.close()
         print(results)
         utils.print_log(f'end of Test, epoch-{epoch}') # testonly
-        with open('C:/test_results/VKDE_gowalla_base.txt', 'a') as file_test_result:
-            print(f'{epoch}th epoch test result:', file=file_test_result)
-            print(results, file=file_test_result)
+        utils.write_test_result(f'{epoch}-th epoch, {results}', 'VKDE_yelp2018_base.txt')
         return results
 
 
-
 def Test_sim(dataset, Recmodel, epoch, w=None, multicore=0):
-    utils.print_log(f'start of Test, epoch-{epoch}') # testonly
     u_batch_size = world.config['test_u_batch_size']
     dataset: utils.BasicDataset
     testDict: dict = dataset.testDict
@@ -247,7 +243,6 @@ def Test_sim(dataset, Recmodel, epoch, w=None, multicore=0):
         return 0
 
 def Test_Diff_Users(dataset, Recmodel, epoch, w=None, multicore=0):
-    utils.print_log(f'start of Test, epoch-{epoch}') # testonly
     u_batch_size = world.config['test_u_batch_size']
     dataset: utils.BasicDataset
     testDict: dict = dataset.testDict
@@ -360,7 +355,6 @@ def Test_Diff_Users(dataset, Recmodel, epoch, w=None, multicore=0):
         return results_groups, group_line
 
 def Test_Embeddings(dataset, Recmodel, epoch, w=None, multicore=0):
-    utils.print_log(f'start of Test, epoch-{epoch}') # testonly
     u_batch_size = world.config['test_u_batch_size']
     dataset: utils.BasicDataset
     testDict: dict = dataset.testDict
@@ -451,7 +445,4 @@ def Test_Embeddings(dataset, Recmodel, epoch, w=None, multicore=0):
         if multicore == 1:
             pool.close()
         print(results)
-        with open('C:/test_results/VKDE_gowalla_base.txt', 'a') as file_test_result:
-            print(f'{epoch}th epoch test result:', file=file_test_result)
-            print(results, file=file_test_result)
         return results
