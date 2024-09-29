@@ -152,11 +152,10 @@ def Test(dataset, Recmodel, epoch, w=None, multicore=0):
             pool.close()
         print(results)
         utils.print_log(f'end of Test, epoch-{epoch}') # testonly
-        with open('C:/test_results/VKDE_gowalla_base.txt', 'a') as file_test_result:
+        with open('C:/test_results/VKDE_yelp2018_base.txt', 'a') as file_test_result:
             print(f'{epoch}th epoch test result:', file=file_test_result)
             print(results, file=file_test_result)
         return results
-
 
 
 def Test_sim(dataset, Recmodel, epoch, w=None, multicore=0):
@@ -451,7 +450,4 @@ def Test_Embeddings(dataset, Recmodel, epoch, w=None, multicore=0):
         if multicore == 1:
             pool.close()
         print(results)
-        with open('C:/test_results/VKDE_gowalla_base.txt', 'a') as file_test_result:
-            print(f'{epoch}th epoch test result:', file=file_test_result)
-            print(results, file=file_test_result)
         return results

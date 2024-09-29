@@ -271,6 +271,7 @@ class VKDE(nn.Module):
     #ideology：calculate local interaction，forward learning，combine local distribution
     def forward_kernel_1226(self, rating_matrix_batch, rating_matrix_batch2=None):
         utils.print_log(f'start of forward_kernel_1226') # testonly
+        utils.print_log(f"Memory Usage: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
         batch_input0 = F.normalize(rating_matrix_batch, p=2, dim=1)
         batch_input0 = F.dropout(batch_input0, p=self.dropout, training=self.training)
 
@@ -295,21 +296,19 @@ class VKDE(nn.Module):
             else:
                 items = torch.nonzero(user_input).cpu().numpy()
             items = items.reshape(-1)
-
             # deal with no interaction
             if len(items) == 0:
                 items = np.random.choice(range(self.num_items), 30)
-           
+
             logging.warning('user:{0}, items:{1},{2}'.format(user, items, batch_input01.shape[0]))
             item_similars_sampled = self.gram_matrix[items] 
             input_item_sampled = item_similars_sampled * user_input
             input_item_sampled = F.normalize(input_item_sampled, p=1, dim=1)
             batch_input_arr.append(input_item_sampled)
-            
             batch_input_num.append(len(items))
-        
-        new_input = torch.cat(batch_input_arr, dim =0).to(world.device) # dengchao: 这里会爆显存
-        batch_input0 = F.normalize(new_input, p=2, dim=1)
+
+        new_input = torch.cat(batch_input_arr, dim=0).to(world.device) # dengchao: 这里会爆显存
+        batch_input0 = F.normalize(new_input, p=2, dim=1) # 这里也分配了很多内存
 
         #encoder and decoder
         x = self.encoder(batch_input0)
@@ -319,10 +318,11 @@ class VKDE(nn.Module):
         if self.training:
             z = mean + epsilon * stddev
         else:
+            self.optim.zero_grad()
             z = mean
 
         logging.warning(z.shape)
-        dot_product = z @ self.items.T
+        # dot_product = z @ self.items.T # 获取单个兴趣和物品embedding的内积，但是没有正则化
 
         try:
             if self.normalize:
@@ -354,10 +354,20 @@ class VKDE(nn.Module):
         var_square = torch.exp(logvar)
         kl = 0.5 * torch.mean(torch.sum(mean ** 2 + var_square - 1. - logvar, dim=-1))
 
-        return z, new_output, kl, batch_input0 
+        # 清除占用大的变量
+        time.sleep(1)
+        if self.training:
+            return z, new_output, kl, batch_input0
+        else:
+            import gc
+            del new_input, batch_input0, z, kl, zeros, ones, batch_input_arr, batch_input_num, out
+            gc.collect()
+            return 0, new_output, 0, 0
 
     #Sample one interest
     def forward_kernel(self, rating_matrix_batch, rating_matrix_batch2=None):
+        utils.print_log(f'start of forward_kernel') # testonly
+        utils.print_log(f"Memory Usage: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
         batch_input0 = F.normalize(rating_matrix_batch, p=2, dim=1)
         batch_input0 = F.dropout(batch_input0, p=self.dropout, training=self.training)
 
@@ -392,52 +402,51 @@ class VKDE(nn.Module):
         try:
             if self.normalize:
                 out = F.normalize(z)@ (F.normalize(self.items).T)  / self.tau 
-            
             else:
                 out = z @ self.items.T 
-
         except Exception as e :
             print(e)
-            print("new_input.shape:", new_input.shape)
+            # print("new_input.shape:", new_input.shape) # dengchao：无效，注释掉
 
         new_output = out
 
         var_square = torch.exp(logvar)
         kl = 0.5 * torch.mean(torch.sum(mean ** 2 + var_square - 1. - logvar, dim=-1))
 
+
+        time.sleep(0.1)
+        import gc
+        del zeros, ones, out, var_square
+        gc.collect()
+
         return z, new_output, kl, batch_input0 
 
+    # 这个函数只被测试调用，因此不需要算梯度
     def getUsersRating(self, users):
-        utils.print_log(f'start of getUsersRating') # testonly
         self.eval()
         users = users.cpu()
         test_batch_size = users.shape[0]
-        
 
         if world.dataset in ['amazon-book', 'ml-20m']:  #hard to load into GPU
-            rating_matrix_batch = self.R[users]
+            pass
+            # rating_matrix_batch = self.R[users]
+            # batch_size = int(self.config['vae_batch_size']/4)
+            # num_users = len(rating_matrix_batch)
+            # n_batch = math.ceil(num_users / batch_size)
+            # predict_out_arr = []
 
-            batch_size = int(self.config['vae_batch_size']/4)
-            num_users = len(rating_matrix_batch)
-            n_batch = math.ceil(num_users / batch_size)
-            predict_out_arr = []
+            # torch.autograd.set_detect_anomaly(True)
+            # for idx in range(n_batch):
+            #     start_idx = idx * batch_size
+            #     end_idx = min(start_idx + batch_size, num_users)
+            #     batch_users = users[start_idx:end_idx]
 
-            torch.autograd.set_detect_anomaly(True)
-            for idx in range(n_batch):
+            #     rating_matrix_batch = self.R[batch_users]
+            #     _, predict_out, kl, _ = self.forward_kernel_1226(rating_matrix_batch)
+            #     predict_out_arr.append(predict_out)
 
-                start_idx = idx * batch_size
-                end_idx = min(start_idx + batch_size, num_users)
-                batch_users = users[start_idx:end_idx]
-
-                rating_matrix_batch = self.R[batch_users]
-
-                _, predict_out, kl, _ = self.forward_kernel_1226(rating_matrix_batch)
-                
-                predict_out_arr.append(predict_out)
-
-            predict_out = torch.cat(predict_out_arr, dim =0).to(world.device)
-            rating_matrix_batch = self.R[users].to(world.device) 
-
+            # predict_out = torch.cat(predict_out_arr, dim =0).to(world.device)
+            # rating_matrix_batch = self.R[users].to(world.device) 
         else:
             rating_matrix_batch = self.R[users].to(world.device)
             _, predict_out, _, _ = self.forward_kernel_1226(rating_matrix_batch)
