@@ -23,8 +23,8 @@ else:
 
 CODE_PATH = join(ROOT_PATH, 'code')
 DATA_PATH = join(ROOT_PATH, 'data')
-LOG_PATH = (ROOT_PATH, 'log')
-TEST_RESULT_PATH = (ROOT_PATH, 'test_result')
+LOG_PATH = join(ROOT_PATH, 'log')
+TEST_RESULT_PATH = join(ROOT_PATH, 'test_result')
 BOARD_PATH = join(CODE_PATH, 'runs')
 FILE_PATH = join(CODE_PATH, 'checkpoints')
 

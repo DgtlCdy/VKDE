@@ -196,7 +196,7 @@ def print_log(str):
     formatted_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f'{str}, {file_name}-Line{line_number}, Time{formatted_now}.')
 
-def write_log(str, log_file_name):
+def write_log(str, log_file_name='log.txt'):
     print_log(str)
     log_file_path = join(world.ROOT_PATH, log_file_name)
     current_frame = inspect.currentframe()
@@ -207,7 +207,7 @@ def write_log(str, log_file_name):
     with open(log_file_path, 'a') as log_file:
         print(f'{str}, {file_name}-Line{line_number}, Time{formatted_now}.', file=log_file)
 
-def write_test_result(str, test_result_name):
+def write_test_result(str, test_result_name='test_result.txt'):
     test_result_path = join(world.ROOT_PATH, test_result_name)
     with open(test_result_path, 'a') as test_result:
         print(str, file=test_result)
