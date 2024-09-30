@@ -604,7 +604,7 @@ class VKDE(nn.Module):
             norm_mat = norm_mat.dot(d_mat.toarray()).astype(np.float32)
             # 自乘，shape是num_items*num_items
             # 每一个位置是两个物品向量的内积代表其相似度，并在这之前做了度的归一化处理，除了两个物品根号度和所有用户的度
-            gram_matrix = norm_mat.T.dot(norm_mat).toarray() 
+            gram_matrix = norm_mat.T.dot(norm_mat)
             print("Successfully created the co-occurrence matrix!")
 
             # 取前topk个相似度最大的元素排序，idx_mat是对方item的id，mat是对应相似度值
@@ -618,12 +618,10 @@ class VKDE(nn.Module):
                 if iid % 15000 == 0:
                     print(f'Getting {format(iid)} items topk done')
 
-            gram_matrix = gram_matrix
-            ii_sim_mat = self.ii_sim_mat
-            ii_sim_idx_mat = self.ii_sim_idx_mat.numpy()
+            ii_sim_idx_mat = ii_sim_idx_mat.numpy()
             joblib.dump(gram_matrix, gram_matrix_path, compress=3)
-            joblib.dump(self.ii_sim_mat, ii_sim_mat_path, compress=3)
-            joblib.dump(self.ii_sim_idx_mat, ii_sim_idx_mat_path, compress=3)
+            joblib.dump(ii_sim_mat, ii_sim_mat_path, compress=3)
+            joblib.dump(ii_sim_idx_mat, ii_sim_idx_mat_path, compress=3)
         else:
             gram_matrix = joblib.load(gram_matrix_path)
             ii_sim_mat = joblib.load(ii_sim_mat_path)
