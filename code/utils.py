@@ -8,7 +8,7 @@ import numpy as np
 from torch import log
 from dataloader import BasicDataset
 from time import time
-from sklearn.metrics import roc_auc_score
+# from sklearn.metrics import roc_auc_score
 import random
 import os
 try:
@@ -257,16 +257,16 @@ def NDCGatK_r(test_data,r,k):
     ndcg[np.isnan(ndcg)] = 0.
     return np.sum(ndcg)
 
-def AUC(all_item_scores, dataset, test_data):
-    """
-        design for a single user
-    """
-    dataset : BasicDataset
-    r_all = np.zeros((dataset.m_items, ))
-    r_all[test_data] = 1
-    r = r_all[all_item_scores >= 0]
-    test_item_scores = all_item_scores[all_item_scores >= 0]
-    return roc_auc_score(r, test_item_scores)
+# def AUC(all_item_scores, dataset, test_data):
+#     """
+#         design for a single user
+#     """
+#     dataset : BasicDataset
+#     r_all = np.zeros((dataset.m_items, ))
+#     r_all[test_data] = 1
+#     r = r_all[all_item_scores >= 0]
+#     test_item_scores = all_item_scores[all_item_scores >= 0]
+#     return roc_auc_score(r, test_item_scores)
 
 def getLabel(test_data, pred_data):
     r = []
