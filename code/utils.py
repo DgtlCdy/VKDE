@@ -11,9 +11,10 @@ from time import time
 # from sklearn.metrics import roc_auc_score
 import random
 import os
+from os.path import join, dirname, abspath
+
 try:
     from cppimport import imp_from_filepath
-    from os.path import join, dirname
     path = join(dirname(__file__), "sources/sampling.cpp")
     sampling = imp_from_filepath(path)
     sampling.seed(world.seed)
@@ -193,9 +194,10 @@ def print_log(str):
     file_name = caller_frame.f_code.co_filename
     line_number = caller_frame.f_lineno  
     formatted_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f'{str}, {file_name}, {line_number}, {formatted_now}.')
+    print(f'{str}, {file_name}-Line{line_number}, Time{formatted_now}.')
 
 def write_log(str, log_file_name):
+    print_log(str)
     log_file_path = join(world.ROOT_PATH, log_file_name)
     current_frame = inspect.currentframe()
     caller_frame = current_frame.f_back
