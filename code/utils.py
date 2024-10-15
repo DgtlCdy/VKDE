@@ -8,12 +8,13 @@ import numpy as np
 from torch import log
 from dataloader import BasicDataset
 from time import time
-from sklearn.metrics import roc_auc_score
+# from sklearn.metrics import roc_auc_score
 import random
 import os
+from os.path import join, dirname, abspath
+
 try:
     from cppimport import imp_from_filepath
-    from os.path import join, dirname
     path = join(dirname(__file__), "sources/sampling.cpp")
     sampling = imp_from_filepath(path)
     sampling.seed(world.seed)
@@ -193,9 +194,10 @@ def print_log(str):
     file_name = caller_frame.f_code.co_filename
     line_number = caller_frame.f_lineno  
     formatted_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f'{str}, {file_name}, {line_number}, {formatted_now}.')
+    print(f'{str}, {file_name}-Line{line_number}, Time{formatted_now}.')
 
-def write_log(str, log_file_name):
+def write_log(str, log_file_name='log.txt'):
+    print_log(str)
     log_file_path = join(world.ROOT_PATH, log_file_name)
     current_frame = inspect.currentframe()
     caller_frame = current_frame.f_back
@@ -205,7 +207,7 @@ def write_log(str, log_file_name):
     with open(log_file_path, 'a') as log_file:
         print(f'{str}, {file_name}-Line{line_number}, Time{formatted_now}.', file=log_file)
 
-def write_test_result(str, test_result_name):
+def write_test_result(str, test_result_name='test_result.txt'):
     test_result_path = join(world.ROOT_PATH, test_result_name)
     with open(test_result_path, 'a') as test_result:
         print(str, file=test_result)
@@ -257,16 +259,16 @@ def NDCGatK_r(test_data,r,k):
     ndcg[np.isnan(ndcg)] = 0.
     return np.sum(ndcg)
 
-def AUC(all_item_scores, dataset, test_data):
-    """
-        design for a single user
-    """
-    dataset : BasicDataset
-    r_all = np.zeros((dataset.m_items, ))
-    r_all[test_data] = 1
-    r = r_all[all_item_scores >= 0]
-    test_item_scores = all_item_scores[all_item_scores >= 0]
-    return roc_auc_score(r, test_item_scores)
+# def AUC(all_item_scores, dataset, test_data):
+#     """
+#         design for a single user
+#     """
+#     dataset : BasicDataset
+#     r_all = np.zeros((dataset.m_items, ))
+#     r_all[test_data] = 1
+#     r = r_all[all_item_scores >= 0]
+#     test_item_scores = all_item_scores[all_item_scores >= 0]
+#     return roc_auc_score(r, test_item_scores)
 
 def getLabel(test_data, pred_data):
     r = []

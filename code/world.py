@@ -15,7 +15,7 @@ os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 args = parse_args()
 
-# ROOT_PATH = os.path.dirname(os.path.dirname(__file__))
+# ROOT_PATH = os.path.dirname(os.path.dirname(__file__)) # 这个命令，Linux下获取不到
 if platform.system() == 'Windows':
     ROOT_PATH = 'C:/codes/VKDE'
 else:
@@ -23,8 +23,8 @@ else:
 
 CODE_PATH = join(ROOT_PATH, 'code')
 DATA_PATH = join(ROOT_PATH, 'data')
-LOG_PATH = (ROOT_PATH, 'log')
-TEST_RESULT_PATH = (ROOT_PATH, 'test_result')
+LOG_PATH = join(ROOT_PATH, 'log')
+TEST_RESULT_PATH = join(ROOT_PATH, 'test_result')
 BOARD_PATH = join(CODE_PATH, 'runs')
 FILE_PATH = join(CODE_PATH, 'checkpoints')
 

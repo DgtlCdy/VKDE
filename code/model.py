@@ -270,7 +270,7 @@ class VKDE(nn.Module):
 
     #ideology：calculate local interaction，forward learning，combine local distribution
     def forward_kernel_1226(self, rating_matrix_batch, rating_matrix_batch2=None):
-        utils.print_log(f'Start of forward_kernel_1226, Memory allocated {torch.cuda.memory_allocated()/1024**3:.2f}GB.') # testonly
+        utils.write_log(f'Start of forward_kernel_1226, Memory allocated {torch.cuda.memory_allocated()/1024**3:.2f}GB.') # testonly
         batch_input0 = F.normalize(rating_matrix_batch, p=2, dim=1)
         batch_input0 = F.dropout(batch_input0, p=self.dropout, training=self.training)
 
@@ -365,7 +365,7 @@ class VKDE(nn.Module):
 
     #Sample one interest
     def forward_kernel(self, rating_matrix_batch, rating_matrix_batch2=None):
-        utils.print_log(f'Start of forward_kernel, Memory allocated {torch.cuda.memory_allocated()/1024**3:.2f}GB.') # testonly
+        utils.write_log(f'Start of forward_kernel, Memory allocated {torch.cuda.memory_allocated()/1024**3:.2f}GB.') # testonly
         batch_input0 = F.normalize(rating_matrix_batch, p=2, dim=1)
         batch_input0 = F.dropout(batch_input0, p=self.dropout, training=self.training)
 
@@ -470,7 +470,7 @@ class VKDE(nn.Module):
 
             self.R2[user] = tmp[0]
 
-        utils.print_log(f'end of getUsersRating') # testonly
+        utils.write_log(f'end of getUsersRating') # testonly
         return predict_out
 
 
@@ -505,7 +505,7 @@ class VKDE(nn.Module):
         return reg
 
     def train_one_epoch(self):
-        utils.print_log(f'start of train_one_epoch') # testonly
+        utils.write_log(f'start of train_one_epoch') # testonly
         self.train()
         users = np.arange(self.num_users)
         batch_size = self.config['vae_batch_size']
@@ -575,7 +575,7 @@ class VKDE(nn.Module):
         loss_dict['neg_ll'] = neg_ll_list
         loss_dict['kl'] = kl_list
         loss_dict['reg'] =  reg_list
-        utils.print_log(f'end of train_one_epoch') # testonly
+        utils.write_log(f'end of train_one_epoch') # testonly
         return loss_dict
 
     
@@ -583,7 +583,7 @@ class VKDE(nn.Module):
         """
         For every item, get its topk similar items according to the co-occurrent matrix.
         """
-        utils.print_log(f'start of get_topk_ii') # testonly
+        utils.write_log(f'start of get_topk_ii') # testonly
         save_path = f'./pretrained/{world.dataset}/{world.model_name}'
         ii_sim_mat_path = save_path + '/ii_sim_mat_'+ str(self.topk) +'.pkl'
         ii_sim_idx_mat_path = save_path + '/ii_sim_idx_mat_'+ str(self.topk) +'.pkl'
@@ -604,7 +604,7 @@ class VKDE(nn.Module):
             norm_mat = norm_mat.dot(d_mat.toarray()).astype(np.float32)
             # 自乘，shape是num_items*num_items
             # 每一个位置是两个物品向量的内积代表其相似度，并在这之前做了度的归一化处理，除了两个物品根号度和所有用户的度
-            gram_matrix = norm_mat.T.dot(norm_mat).toarray() 
+            gram_matrix = norm_mat.T.dot(norm_mat)
             print("Successfully created the co-occurrence matrix!")
 
             # 取前topk个相似度最大的元素排序，idx_mat是对方item的id，mat是对应相似度值
@@ -618,12 +618,10 @@ class VKDE(nn.Module):
                 if iid % 15000 == 0:
                     print(f'Getting {format(iid)} items topk done')
 
-            gram_matrix = gram_matrix
-            ii_sim_mat = self.ii_sim_mat
-            ii_sim_idx_mat = self.ii_sim_idx_mat.numpy()
+            ii_sim_idx_mat = ii_sim_idx_mat.numpy()
             joblib.dump(gram_matrix, gram_matrix_path, compress=3)
-            joblib.dump(self.ii_sim_mat, ii_sim_mat_path, compress=3)
-            joblib.dump(self.ii_sim_idx_mat, ii_sim_idx_mat_path, compress=3)
+            joblib.dump(ii_sim_mat, ii_sim_mat_path, compress=3)
+            joblib.dump(ii_sim_idx_mat, ii_sim_idx_mat_path, compress=3)
         else:
             gram_matrix = joblib.load(gram_matrix_path)
             ii_sim_mat = joblib.load(ii_sim_mat_path)

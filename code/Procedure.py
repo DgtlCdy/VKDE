@@ -15,7 +15,7 @@ from time import time
 from tqdm import tqdm
 import model
 import multiprocessing
-from sklearn.metrics import roc_auc_score
+# from sklearn.metrics import roc_auc_score
 import math
 import joblib
 
