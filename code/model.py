@@ -305,7 +305,7 @@ class VKDE(nn.Module):
                 items = np.random.choice(range(self.num_items), 30)
 
             logging.warning('user:{0}, items:{1},{2}'.format(user, items, batch_input01.shape[0]))
-            item_similars_sampled = self.gram_matrix[items]
+            item_similars_sampled = torch.Tensor(self.gram_matrix[items].toarray()).to(world.device)
             input_item_sampled = item_similars_sampled * user_input  # 交互数目*总数目 X 维度
             input_item_sampled = F.normalize(input_item_sampled, p=1, dim=1)  # 获取到用户的全部兴趣，数目为交互数目。
             batch_input_arr.append(input_item_sampled)
