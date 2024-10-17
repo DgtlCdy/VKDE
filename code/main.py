@@ -37,7 +37,7 @@ if __name__ == '__main__':
     if world.LOAD:
         try:
             Recmodel.load_state_dict(torch.load(weight_file,map_location=torch.device('cpu')))
-            # Recmodel.get_topk_ii() # 这里是不是重复了？
+            # Recmodel.get_topk_ii() # 这里重复了
             world.cprint(f"loaded model weights from {weight_file}")
         except FileNotFoundError:
             print(f"{weight_file} not exists, start from beginning")
