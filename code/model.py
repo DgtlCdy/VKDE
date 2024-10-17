@@ -246,7 +246,6 @@ class VKDE(nn.Module):
 
         # 获取每一个i的最相似矩阵
         self.gram_matrix, self.ii_sim_mat, self.ii_sim_idx_mat = self.get_topk_ii()
-        
 
         # dengchao：这是因为大的数据源会爆显存？
         # if world.dataset in ['amazon-book', 'ml-20m']:
@@ -379,7 +378,12 @@ class VKDE(nn.Module):
         batch_input01 = torch.where(batch_input0>0, ones, zeros) 
 
         logging.debug(('{0}, {1}').format(rating_matrix_batch2.shape, rating_matrix_batch2))
-        item_similars_sampled = torch.Tensor(self.gram_matrix[rating_matrix_batch2]).to(world.device)
+
+        gram_matrix_cpu = self.gram_matrix.to('cpu')
+        rating_matrix_batch2_cpu = rating_matrix_batch2.to('cpu')
+        # item_similars_sampled = torch.Tensor(self.gram_matrix[rating_matrix_batch2])
+        item_similars_sampled = torch.Tensor(gram_matrix_cpu[rating_matrix_batch2_cpu]).to(world.device)
+
         logging.debug(('{0}, {1}').format(item_similars_sampled.shape, batch_input01.shape))
         input_item_sampled = item_similars_sampled * batch_input01
         input_item_sampled = F.normalize(input_item_sampled, p=1, dim=1)
@@ -623,6 +627,7 @@ class VKDE(nn.Module):
             joblib.dump(ii_sim_mat, ii_sim_mat_path, compress=3)
             joblib.dump(ii_sim_idx_mat, ii_sim_idx_mat_path, compress=3)
         else:
+            utils.write_log(f'load existed matrix') # testonly
             gram_matrix = joblib.load(gram_matrix_path)
             ii_sim_mat = joblib.load(ii_sim_mat_path)
             ii_sim_idx_mat = joblib.load(ii_sim_idx_mat_path)
@@ -638,5 +643,5 @@ class VKDE(nn.Module):
                 print(gram_matrix.cpu().shape, self.items.shape)
             except: 
                 print("EOFError!")
-
+        utils.write_log(f'end of get_topk_ii') # testonly
         return gram_matrix, ii_sim_mat, ii_sim_idx_mat

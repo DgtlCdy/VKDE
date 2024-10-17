@@ -27,6 +27,7 @@ import model
 
 
 if __name__ == '__main__':
+    utils.write_log(f'start train in device-{world.device}') # testonly
     Recmodel = register.MODELS[world.model_name](world.config, dataset)
     if isinstance(Recmodel, nn.Module):
         Recmodel = Recmodel.to(world.device)
