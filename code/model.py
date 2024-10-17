@@ -72,9 +72,9 @@ class MultVAE(BasicModel):
         self.encoder = nn.Sequential()
         for i, (in_dim, out_dim) in enumerate(zip(enc_dims[:-1], enc_dims[1:])):
             if i == len(enc_dims) - 2:
-                # out_dim = out_dim * 2
+                out_dim = out_dim * 2
                 # 权重参数：对每一个维度加一个权重
-                out_dim = out_dim * 2 + 1
+                # out_dim = out_dim * 2 + 1
             self.encoder.add_module(name='Encoder_Linear_%s'%i, module=nn.Linear(in_dim, out_dim))
             if i != len(enc_dims) - 2:
                 self.encoder.add_module(name='Encoder_Activation_%s'%i, module=self.act)
@@ -231,7 +231,8 @@ class VKDE(nn.Module):
         for i, (in_dim, out_dim) in enumerate(zip(enc_dims[:-1], enc_dims[1:])):
             # 在倒数第二层分裂开，一半均值，一半方差
             if i == len(enc_dims) - 2:
-                out_dim = out_dim * 2 + 1
+                out_dim = out_dim * 2
+                # out_dim = out_dim * 2 + 1
             self.encoder.add_module(name='Encoder_Linear_%s'%i, module=nn.Linear(in_dim, out_dim))
             if i != len(enc_dims) - 2:
                 self.encoder.add_module(name='Encoder_Activation_%s'%i, module=self.act)
@@ -256,7 +257,8 @@ class VKDE(nn.Module):
         #     self.gram_matrix = torch.tensor(self.gram_matrix).float()
         # else:
         #     self.gram_matrix = torch.tensor(self.gram_matrix).float().to(world.device)
-        self.gram_matrix = torch.tensor(self.gram_matrix).float().to(world.device)
+        # 这个数据是固定的，放在cpu是可以的
+        # self.gram_matrix = self.gram_matrix.float().to(world.device)
 
     # dengchao: 对全部要学习的参数做随机初始化
     def init_param(self):
@@ -397,10 +399,11 @@ class VKDE(nn.Module):
         logging.debug(('{0}, {1}').format(rating_matrix_batch2.shape, rating_matrix_batch2))
 
         # 直接对cuda设备算索引时linux会报错
-        gram_matrix_cpu = self.gram_matrix.to('cpu')
-        rating_matrix_batch2_cpu = rating_matrix_batch2.to('cpu')
-        # item_similars_sampled = torch.Tensor(self.gram_matrix[rating_matrix_batch2])
-        item_similars_sampled = torch.Tensor(gram_matrix_cpu[rating_matrix_batch2_cpu]).to(world.device)
+        # gram_matrix_cpu = self.gram_matrix.to('cpu')
+        # rating_matrix_batch2_cpu = rating_matrix_batch2.to('cpu')
+        
+        # item_similars_sampled = torch.Tensor(gram_matrix_cpu[rating_matrix_batch2_cpu]).to(world.device)
+        item_similars_sampled = torch.Tensor(self.gram_matrix[rating_matrix_batch2].toarray()).to(world.device)
 
         logging.debug(('{0}, {1}').format(item_similars_sampled.shape, batch_input01.shape))
         input_item_sampled = item_similars_sampled * batch_input01 # 哈达玛积，只获取交互项目中的相似度值，其它的相似度舍弃掉，最重要的部分
@@ -436,7 +439,7 @@ class VKDE(nn.Module):
         kl = 0.5 * torch.mean(torch.sum(mean ** 2 + var_square - 1. - logvar, dim=-1))
 
 
-        time.sleep(0.1)
+        time.sleep(0.01)
         import gc
         del zeros, ones, out, var_square
         gc.collect()
@@ -680,11 +683,12 @@ class VKDE(nn.Module):
             # else:
             #     _, predict_out, kl, _ = self.forward_kernel_1226(rating_matrix_batch)
             # 
-            # # dengchao：先硬性规定全程用采样策略
+            # # dengchao：先硬性规定全程用采样策略，效果感觉反而最好
             # rating_matrix_batch2 = torch.LongTensor(self.R2[batch_users]).to(world.device) # batch2.shape是[1024]
-            # _, predict_out, kl, _ = self.forward_kernel(rating_matrix_batch, rating_matrix_batch2)
+            rating_matrix_batch2 = torch.LongTensor(self.R2[batch_users]).cpu() # batch2.shape是[1024]
+            _, predict_out, kl, _ = self.forward_kernel(rating_matrix_batch, rating_matrix_batch2)
             # _, predict_out, kl, _ = self.forward_kernel_1226(rating_matrix_batch)
-            _, predict_out, kl, _ = self.forward_kernel_fix_sample(rating_matrix_batch)
+            # _, predict_out, kl, _ = self.forward_kernel_fix_sample(rating_matrix_batch)
 
             neg_ll, log_likelihood_O, log_likelihood_I = self.calculate_mult_log_likelihood_simple(predict_out, rating_matrix_batch)  #self.PRINT 传递epoch信息
             
@@ -754,12 +758,20 @@ class VKDE(nn.Module):
 
             ii_sim_idx_mat = ii_sim_idx_mat.numpy()
 
-            # # 把gram_matrix转化为top100的行稀疏矩阵
-            # indices = torch.topk(gram_matrix, 100, dim=1).indices
-            # zero_tensor = torch.zeros_like(gram_matrix)  # 创建一个与原 Tensor 形状相同的零 Tensor  
-            # zero_tensor.scatter_(1, indices, gram_matrix.gather(1, indices))  # 使用索引将原 Tensor 中最大的前 100 项的值复制到零 Tensor 中
-            # # print(zero_tensor) # 现在 zero_tensor 就是我们想要的结果
-            # gram_matrix = sp.csr_matrix(gram_matrix.numpy(), shape=(self.num_items, self.num_items)) # 本地测试已通过，可以整体调一下
+            # 把gram_matrix转化为top100的行稀疏矩阵
+            gram_matrix = torch.Tensor(gram_matrix)
+            indices = torch.topk(gram_matrix, 100, dim=1).indices
+            gram_matrix_topk = torch.zeros_like(gram_matrix)  # 创建一个与原 Tensor 形状相同的零 Tensor  
+            gram_matrix_topk.scatter_(1, indices, gram_matrix.gather(1, indices))  # 使用索引将原 Tensor 中最大的前 100 项的值复制到topk Tensor 中
+            # print(gram_matrix_topk) # 现在 gram_matrix_topk 就是我们想要的结果
+            gram_matrix = sp.csr_matrix(gram_matrix_topk.numpy(), shape=(self.num_items, self.num_items)) # 本地测试已通过，可以整体调一下
+
+            # gram_matrix_csr = gram_matrix
+            # gram_matrix_coo = gram_matrix_csr.tocoo()
+            # indices = torch.from_numpy(np.vstack((gram_matrix_coo.row, gram_matrix_coo.col)).astype(np.int64))  
+            # values = torch.from_numpy(gram_matrix_coo.data.astype(np.float32))
+            # sparse_tensor = torch.sparse_coo_tensor(indices, values, (gram_matrix_csr.shape[0], gram_matrix_csr.shape[1]))
+            # gram_matrix = sparse_tensor.to(world.device)
 
             joblib.dump(gram_matrix, gram_matrix_path, compress=3)
             joblib.dump(ii_sim_mat, ii_sim_mat_path, compress=3)
