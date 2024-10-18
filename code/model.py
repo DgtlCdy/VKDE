@@ -258,6 +258,7 @@ class VKDE(nn.Module):
 
         # 获取每一个i的最相似矩阵
         self.gram_matrix, self.ii_sim_mat, self.ii_sim_idx_mat = self.get_topk_ii()
+        self.indices_neg = torch.Tensor()
 
         # dengchao：这是因为大的数据源会爆显存？
         # if world.dataset in ['amazon-book', 'ml-20m']:
@@ -267,7 +268,7 @@ class VKDE(nn.Module):
         # 这个数据是固定的，放在cpu是可以的
         # self.gram_matrix = self.gram_matrix.float().to(world.device)
 
-    # dengchao: 对全部要学习的参数做随机初始化
+    # 对全部要学习的参数做随机初始化
     def init_param(self):
         for m in self.modules():
             if isinstance(m, nn.Linear):
@@ -295,11 +296,19 @@ class VKDE(nn.Module):
         #     ones = torch.ones(rating_matrix_batch.shape[1]).to(world.device)
         zeros = torch.zeros(rating_matrix_batch.shape[1]).to(world.device)
         ones = torch.ones(rating_matrix_batch.shape[1]).to(world.device)
+        # batch_input01 = torch.where(batch_input0>0, ones, zeros) # 标注batch_input0信息，batch_input0中大于0的就是1，其它的就是0
 
-        batch_input01 = torch.where(batch_input0>0, ones, zeros)  #dropout rating_matrix_batch
+        # 引入负面消息,与batch_input01拼接
+        batch_input_neg = torch.zeros_like(batch_input0).int()
+        for user_neg in batch_input_neg:
+            indices_neg_sample = np.random.choice(range(500), 32, replace=False)
+            user_neg[indices_neg_sample] = 1
+        # batch_input01 = torch.where(batch_input0>0 or batch_input_neg>0, ones, zeros)
+        batch_input01 = torch.where(batch_input0>0, ones, zeros)
+        batch_input01 = batch_input01 + batch_input_neg
+
         batch_input_arr = []   #record multiple local interactions
         batch_input_num = []   #record number
-
         for user in range(batch_input01.shape[0]):
             user_input = batch_input01[user] # 目标user的全部交互，1为交互0为不交互
             if rating_matrix_batch2!=None:
@@ -569,6 +578,73 @@ class VKDE(nn.Module):
             return 0, new_output, 0, 0
 
 
+    #Sample with bpr
+    def forward_kernel_bpr(self, rating_matrix_batch, rating_matrix_batch2=None):
+        utils.write_log(f'Start of forward_kernel_bpr, Memory allocated {torch.cuda.memory_allocated(world.device)/1024**3:.2f}GB.') # testonly
+        batch_input0 = F.normalize(rating_matrix_batch, p=2, dim=1)
+        batch_input0 = F.dropout(batch_input0, p=self.dropout, training=self.training)
+
+        zeros = torch.zeros(rating_matrix_batch.shape[1]).to(world.device)
+        ones = torch.ones(rating_matrix_batch.shape[1]).to(world.device)
+        # batch_input01 = torch.where(batch_input0>0, ones, zeros) # 标注batch_input0信息，batch_input0中大于0的就是1，其它的就是0
+        
+        # 引入负面消息,与batch_input01拼接
+        batch_input_neg = torch.zeros_like(batch_input0).int()
+        for user_neg in batch_input_neg:
+            indices_neg_sample = np.random.choice(range(500), 32, replace=False)
+            user_neg[indices_neg_sample] = 1
+
+        # batch_input01 = torch.where(batch_input0>0 or batch_input_neg>0, ones, zeros)
+        batch_input01 = torch.where(batch_input0>0, ones, zeros)
+        batch_input01 = batch_input01 + batch_input_neg
+
+        # 直接对cuda设备算索引时linux会报错
+        # gram_matrix_cpu = self.gram_matrix.to('cpu')
+        # rating_matrix_batch2_cpu = rating_matrix_batch2.to('cpu')
+        
+        # item_similars_sampled = torch.Tensor(gram_matrix_cpu[rating_matrix_batch2_cpu]).to(world.device)
+        item_similars_sampled = torch.Tensor(self.gram_matrix[rating_matrix_batch2].toarray()).to(world.device)
+        input_item_sampled = item_similars_sampled * batch_input01 # 哈达玛积，只获取交互项目中的相似度值，其它的相似度舍弃掉，最重要的部分
+        input_item_sampled = F.normalize(input_item_sampled, p=1, dim=1)
+
+        batch_input0 = F.normalize(input_item_sampled, p=2, dim=1)
+
+        #encoder 和 decoder
+        x = self.encoder(batch_input0)
+        mean, logvar = x[:, :(len(x[0])//2)], x[:, (len(x[0])//2):] # 前一半是均值，后一半是方差
+        stddev = torch.exp(0.5 * logvar)
+        epsilon = torch.randn_like(stddev) # 重参数化中的标准采样
+        if self.training:
+            z = mean + epsilon * stddev
+        else:
+            z = mean
+        # dot_product = z @ self.items.T
+        # 在编码器获取分布后，通过重采样获取到z，格式是64维的Embedding
+
+        # 和全部items求内积，获得items长度的评分序列: 1024*64 @ 64*item_numers
+        try:
+            if self.normalize:
+                out = F.normalize(z)@ (F.normalize(self.items).T)  / self.tau 
+            else:
+                out = z @ self.items.T 
+        except Exception as e :
+            print(e)
+            # print("new_input.shape:", new_input.shape) # dengchao：无效，注释掉
+
+        new_output = out
+
+        var_square = torch.exp(logvar)
+        kl = 0.5 * torch.mean(torch.sum(mean ** 2 + var_square - 1. - logvar, dim=-1))
+
+
+        time.sleep(0.01)
+        import gc
+        del zeros, ones, out, var_square
+        gc.collect()
+
+        return z, new_output, kl, batch_input0
+
+
     # 这个函数只被测试调用，因此不需要算梯度
     def getUsersRating(self, users):
         self.eval()
@@ -705,7 +781,8 @@ class VKDE(nn.Module):
             rating_matrix_batch2 = rating_matrix_batch2.flatten()
             rating_matrix_batch2 = torch.LongTensor(rating_matrix_batch2).cpu()
 
-            _, predict_out, kl, _ = self.forward_kernel(rating_matrix_batch, rating_matrix_batch2)
+            # _, predict_out, kl, _ = self.forward_kernel(rating_matrix_batch, rating_matrix_batch2)
+            _, predict_out, kl, _ = self.forward_kernel_bpr(rating_matrix_batch, rating_matrix_batch2)
             # _, predict_out, kl, _ = self.forward_kernel_1226(rating_matrix_batch)
             # _, predict_out, kl, _ = self.forward_kernel_fix_sample(rating_matrix_batch)
 
@@ -820,31 +897,36 @@ class VKDE(nn.Module):
 
 
     def update_gram_matrix(self, epoch_num):
-        if epoch_num == 0:
-            return
-
         # 获得正则化后的相似度，取值范围-1到1
         save_path = f'./pretrained/{world.dataset}/{world.model_name}'
         gram_matrix_path = save_path + '/gram_matrix.pkl'
-        gram_matrix = torch.zeros((self.num_items, self.num_items)).float()
-        items_norm = F.normalize(self.items)
-        for i in range(self.num_items):
-            for j in range(self.num_items):
-                gram_matrix[i, j] = items_norm[i] @ items_norm[j]
         
+        if epoch_num > 40:
+            gram_matrix = torch.zeros((self.num_items, self.num_items)).float()
+            items_norm = F.normalize(self.items)
+            for i in range(self.num_items):
+                for j in range(self.num_items):
+                    gram_matrix[i, j] = items_norm[i] @ items_norm[j]
+        else:
+            # 比较早的时候不做处理，保持原状
+            gram_matrix = torch.Tensor(self.gram_matrix.toarray())
+
         #取前500和后500
         gram_matrix_neg = gram_matrix * -1
         indices = torch.topk(gram_matrix, 500, dim=1).indices
         indices_neg = torch.topk(gram_matrix_neg, 500, dim=1).indices
 
         gram_matrix_topk = torch.zeros_like(gram_matrix)  # 创建一个与原 Tensor 形状相同的零 Tensor  
-        gram_matrix_topk.scatter_(1, indices, gram_matrix.gather(1, indices))  # 使用索引将原 Tensor 中最大的前 100 项的值复制到topk Tensor 中
+        gram_matrix_topk.scatter_(1, indices, gram_matrix.gather(1, indices))  # 使用索引将原 Tensor 中最大的前k项的值复制到topk Tensor 中
         gram_matrix_neg_topk = torch.zeros_like(gram_matrix)  # 创建一个与原 Tensor 形状相同的零 Tensor  
         gram_matrix_neg_topk.scatter_(1, indices_neg, gram_matrix_neg.gather(1, indices_neg))  # 使用索引将原 Tensor 中最大的前 100 项的值复制到topk Tensor 中
         # 现在 gram_matrix_sum 就是我们想要的结果
         gram_matrix_sum = gram_matrix_topk - gram_matrix_neg_topk
-        gram_matrix = sp.csr_matrix(gram_matrix_sum.numpy(), shape=(self.num_items, self.num_items))
+        gram_matrix_sum = sp.csr_matrix(gram_matrix_sum.numpy(), shape=(self.num_items, self.num_items))
+        # gram_matrix = sp.csr_matrix(gram_matrix.numpy(), shape=(self.num_items, self.num_items))
+        # gram_matrix_neg = sp.csr_matrix(gram_matrix_neg.numpy(), shape=(self.num_items, self.num_items))
 
-        joblib.dump(gram_matrix, gram_matrix_path, compress=3)
-        joblib.dump(gram_matrix, f'{gram_matrix_path}_{epoch_num}', compress=3)
-        self.gram_matrix = gram_matrix
+        # joblib.dump(gram_matrix, gram_matrix_path, compress=3, overwrite=True)
+        # joblib.dump(gram_matrix, f'{gram_matrix_path}_{epoch_num}', compress=3, overwrite=True)
+        self.gram_matrix = gram_matrix_sum
+        self.indices_neg = indices_neg
