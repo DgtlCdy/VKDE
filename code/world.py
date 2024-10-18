@@ -12,7 +12,7 @@ import multiprocessing
 import platform
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
-os.environ["CUDA_VISIBLE_DEVICES"] = [0, 1, 2, 3]
+os.environ["CUDA_VISIBLE_DEVICES"] = '0, 1, 2, 3'
 torch.cuda.device_count()
 args = parse_args()
 
@@ -294,7 +294,6 @@ if args.model in ['VAEplus','VAE_Graph','VKDE','VAEKernelPlus','VAEKernelEmb']:
 
 GPU = torch.cuda.is_available()
 if args.cuda!= -1 and GPU:
-    # device = torch.device('cuda:'+ str(args.cuda))
     device = torch.device('cuda:'+ str(args.cuda))
 else:
     device = torch.device("cpu")

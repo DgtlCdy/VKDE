@@ -152,7 +152,7 @@ def Test(dataset, Recmodel, epoch, w=None, multicore=0):
             pool.close()
         print(results)
         utils.print_log(f'end of Test, epoch-{epoch}') # testonly
-        utils.write_test_result(f'{epoch}-th epoch, {results}', 'VKDE_yelp2018_base.txt')
+        utils.write_test_result(f'{epoch}-th epoch, {results}', 'VKDE_yelp2018_fix_interest_sample.txt')
         return results
 
 

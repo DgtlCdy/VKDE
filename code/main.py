@@ -37,7 +37,7 @@ if __name__ == '__main__':
     if world.LOAD:
         try:
             Recmodel.load_state_dict(torch.load(weight_file,map_location=torch.device('cpu')))
-            # Recmodel.get_topk_ii() # 这里是不是重复了？
+            # Recmodel.get_topk_ii() # 这里重复了
             world.cprint(f"loaded model weights from {weight_file}")
         except FileNotFoundError:
             print(f"{weight_file} not exists, start from beginning")
@@ -59,40 +59,45 @@ if __name__ == '__main__':
 
     try:
         if(world.simple_model != 'none'):   #for lgn-ide, gf-cf
-            epoch = 0
-            cprint("[TEST]")
-            adj_mat = dataset.UserItemNet.tolil()
-            if(world.simple_model == 'lgn-ide'):
-                lm = model.LGCN_IDE(adj_mat)
-                lm.train()
-            elif(world.simple_model == 'gf-cf'):
-                lm = model.GF_CF(adj_mat)
-                lm.train()
-            def ensure_dirs(path):
-                if not os.path.exists(path):
-                    os.makedirs(path)
-            Procedure.Test(dataset, lm, epoch, w, world.config['multicore'])
+            # epoch = 0
+            # cprint("[TEST]")
+            # adj_mat = dataset.UserItemNet.tolil()
+            # if(world.simple_model == 'lgn-ide'):
+            #     lm = model.LGCN_IDE(adj_mat)
+            #     lm.train()
+            # elif(world.simple_model == 'gf-cf'):
+            #     lm = model.GF_CF(adj_mat)
+            #     lm.train()
+            # def ensure_dirs(path):
+            #     if not os.path.exists(path):
+            #         os.makedirs(path)
+            # Procedure.Test(dataset, lm, epoch, w, world.config['multicore'])
+            pass
         else:  
             if world.model_name == 'lgn':
-                for epoch in range(world.TRAIN_epochs):
-                    if epoch %10 == 0:
-                        cprint("[TEST]")
-                        results = Procedure.Test(dataset, Recmodel, epoch, w, world.config['multicore'])
-                        if results['recall'][0] > best_results['recall'][0]:
-                            best_results = results
-                    output_information = Procedure.BPR_train_original(dataset, Recmodel, bpr, epoch, neg_k=Neg_k,w=w)
-                    print(f'EPOCH[{epoch+1}/{world.TRAIN_epochs}] {output_information}')
-                    torch.save(Recmodel.state_dict(), weight_file)    
-                print('best results: %s'%(best_results))
+                # for epoch in range(world.TRAIN_epochs):
+                #     if epoch %10 == 0:
+                #         cprint("[TEST]")
+                #         results = Procedure.Test(dataset, Recmodel, epoch, w, world.config['multicore'])
+                #         if results['recall'][0] > best_results['recall'][0]:
+                #             best_results = results
+                #     output_information = Procedure.BPR_train_original(dataset, Recmodel, bpr, epoch, neg_k=Neg_k,w=w)
+                #     print(f'EPOCH[{epoch+1}/{world.TRAIN_epochs}] {output_information}')
+                #     torch.save(Recmodel.state_dict(), weight_file)    
+                # print('best results: %s'%(best_results))
+                pass
             else:
                 # 开始训练
                 for epoch in range(world.TRAIN_epochs):
                     utils.write_log(f'start train in epoch-{epoch}') # testonly
                     t0 = time.time()
-                    batch_loss: dict = Recmodel.train_one_epoch()  
+                    if epoch % 50 == 0:
+                        Recmodel.update_gram_matrix(epoch) # 将自身embedding作用于相似矩阵
+                    batch_loss: dict = Recmodel.train_one_epoch()
                     utils.write_log(f'end train in epoch-{epoch}') # testonly
+
                     elapsed_time = time.time() - t0
-                    if (epoch != 0) and ((epoch % 50 == 0) or (epoch == world.TRAIN_epochs - 1)):
+                    if (epoch == 0) or (epoch % 50 == 0) or (epoch == world.TRAIN_epochs - 1):
                         cprint("[TEST]")
                         utils.write_log(f'start Test in epoch-{epoch}') # testonly
                         results = Procedure.Test(dataset, Recmodel, epoch, w, world.config['multicore'])
