@@ -823,12 +823,14 @@ class VKDE(nn.Module):
         if epoch_num == 0:
             return
 
+        # 获得正则化后的相似度，取值范围-1到1
         save_path = f'./pretrained/{world.dataset}/{world.model_name}'
         gram_matrix_path = save_path + '/gram_matrix.pkl'
         gram_matrix = torch.zeros((self.num_items, self.num_items)).float()
+        items_norm = F.normalize(self.items)
         for i in range(self.num_items):
             for j in range(self.num_items):
-                gram_matrix[i, j] = F.normalize(self.items[i]) @ F.normalize(self.items[j])
+                gram_matrix[i, j] = items_norm[i] @ items_norm[j]
         
         #取前500和后500
         gram_matrix_neg = gram_matrix * -1
