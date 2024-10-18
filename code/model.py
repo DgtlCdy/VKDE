@@ -201,6 +201,10 @@ class VKDE(nn.Module):
         logging.warning(type(R))
         self.R = torch.tensor(R).float()
 
+        self.R_id = []
+        for row in self.R.numpy():
+            nonzero_indices = np.nonzero(row)[0]
+            self.R_id.append(nonzero_indices.tolist())
         # dengchao: 为每一个用户分配一个物品，不管是不是交互过
         # 允许重复抽取物品id
         # 这个是用于采样的
@@ -685,7 +689,19 @@ class VKDE(nn.Module):
             # 
             # # dengchao：先硬性规定全程用采样策略，效果感觉反而最好
             # rating_matrix_batch2 = torch.LongTensor(self.R2[batch_users]).to(world.device) # batch2.shape是[1024]
-            rating_matrix_batch2 = torch.LongTensor(self.R2[batch_users]).cpu() # batch2.shape是[1024]
+            # for compare
+            rating_matrix_batch_base = torch.LongTensor(self.R2[batch_users]).cpu() # batch2.shape是[1024]
+
+            rating_matrix_batch2 = []
+            for user in batch_users:
+                if self.R_id[user] == []:
+                    id = np.random.choice(range(self.num_items), 1)
+                id = np.random.choice(self.R_id[user], 1)
+                rating_matrix_batch2.append(id)
+            rating_matrix_batch2 = np.array(rating_matrix_batch2)
+            rating_matrix_batch2 = rating_matrix_batch2.flatten()
+            rating_matrix_batch2 = torch.LongTensor(rating_matrix_batch2).cpu()
+
             _, predict_out, kl, _ = self.forward_kernel(rating_matrix_batch, rating_matrix_batch2)
             # _, predict_out, kl, _ = self.forward_kernel_1226(rating_matrix_batch)
             # _, predict_out, kl, _ = self.forward_kernel_fix_sample(rating_matrix_batch)
@@ -760,7 +776,7 @@ class VKDE(nn.Module):
 
             # 把gram_matrix转化为top100的行稀疏矩阵
             gram_matrix = torch.Tensor(gram_matrix)
-            indices = torch.topk(gram_matrix, 100, dim=1).indices
+            indices = torch.topk(gram_matrix, 1000, dim=1).indices
             gram_matrix_topk = torch.zeros_like(gram_matrix)  # 创建一个与原 Tensor 形状相同的零 Tensor  
             gram_matrix_topk.scatter_(1, indices, gram_matrix.gather(1, indices))  # 使用索引将原 Tensor 中最大的前 100 项的值复制到topk Tensor 中
             # print(gram_matrix_topk) # 现在 gram_matrix_topk 就是我们想要的结果

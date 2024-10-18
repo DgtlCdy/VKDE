@@ -89,7 +89,7 @@ if __name__ == '__main__':
                 for epoch in range(world.TRAIN_epochs):
                     utils.write_log(f'start train in epoch-{epoch}') # testonly
                     t0 = time.time()
-                    batch_loss: dict = Recmodel.train_one_epoch()  
+                    batch_loss: dict = Recmodel.train_one_epoch()
                     utils.write_log(f'end train in epoch-{epoch}') # testonly
                     elapsed_time = time.time() - t0
                     if (epoch % 50 == 0) or (epoch == world.TRAIN_epochs - 1):
