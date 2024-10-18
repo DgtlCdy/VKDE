@@ -257,7 +257,10 @@ class VKDE(nn.Module):
         self.init_optim()
 
         # 获取每一个i的最相似矩阵
-        self.gram_matrix, self.ii_sim_mat, self.ii_sim_idx_mat = self.get_topk_ii()
+        utils.print_log(f'Start of gram_matrix')
+        gram_matrix, _, _ = self.get_topk_ii()
+        self.gram_matrix = gram_matrix #linux上直接返回成self成员会报错
+        utils.print_log(f'End of gram_matrix')
         self.indices_neg = torch.Tensor()
 
         # dengchao：这是因为大的数据源会爆显存？
@@ -300,9 +303,13 @@ class VKDE(nn.Module):
 
         # 引入负面消息,与batch_input01拼接
         batch_input_neg = torch.zeros_like(batch_input0).int()
-        for user_neg in batch_input_neg:
-            indices_neg_sample = np.random.choice(range(500), 32, replace=False)
-            user_neg[indices_neg_sample] = 1
+        indices_neg_sample = np.random.choice(range(500), 32, replace=False)
+        batch_input_neg[:, indices_neg_sample] = 1
+        # batch_input_neg = torch.zeros_like(batch_input0).int()
+        # for user_neg in batch_input_neg:
+        #     indices_neg_sample = np.random.choice(range(500), 32, replace=False)
+        #     user_neg[indices_neg_sample] = 1
+        
         # batch_input01 = torch.where(batch_input0>0 or batch_input_neg>0, ones, zeros)
         batch_input01 = torch.where(batch_input0>0, ones, zeros)
         batch_input01 = batch_input01 + batch_input_neg
@@ -382,7 +389,7 @@ class VKDE(nn.Module):
         kl = 0.5 * torch.mean(torch.sum(mean ** 2 + var_square - 1. - logvar, dim=-1))
 
         # 清除占用大的变量
-        time.sleep(1)
+        time.sleep(0.01)
         if self.training:
             import gc
             del new_input, zeros, ones, batch_input_arr, batch_input_num, out
@@ -590,9 +597,10 @@ class VKDE(nn.Module):
         
         # 引入负面消息,与batch_input01拼接
         batch_input_neg = torch.zeros_like(batch_input0).int()
-        for user_neg in batch_input_neg:
-            indices_neg_sample = np.random.choice(range(500), 32, replace=False)
-            user_neg[indices_neg_sample] = 1
+        indices_neg_sample = np.random.choice(range(500), 32, replace=False)
+        batch_input_neg[:, indices_neg_sample] = 1
+        # for user_neg in batch_input_neg:
+        #     batch_input_neg[:, indices_neg_sample] = 1
 
         # batch_input01 = torch.where(batch_input0>0 or batch_input_neg>0, ones, zeros)
         batch_input01 = torch.where(batch_input0>0, ones, zeros)
