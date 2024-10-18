@@ -37,6 +37,9 @@ class BasicModel(nn.Module):
     
     def getUsersRating(self, users):
         raise NotImplementedError
+    
+    def update_gram_matrix(self, epoch_num):
+        raise NotImplementedError
 
 
 class MultVAE(BasicModel):
@@ -790,6 +793,7 @@ class VKDE(nn.Module):
             # gram_matrix = sparse_tensor.to(world.device)
 
             joblib.dump(gram_matrix, gram_matrix_path, compress=3)
+            joblib.dump(gram_matrix, f'{gram_matrix_path}_0', compress=3)
             joblib.dump(ii_sim_mat, ii_sim_mat_path, compress=3)
             joblib.dump(ii_sim_idx_mat, ii_sim_idx_mat_path, compress=3)
         else:
@@ -813,3 +817,32 @@ class VKDE(nn.Module):
 
         utils.write_log(f'end of get_topk_ii') # testonly
         return gram_matrix, ii_sim_mat, ii_sim_idx_mat
+
+
+    def update_gram_matrix(self, epoch_num):
+        if epoch_num == 0:
+            return
+
+        save_path = f'./pretrained/{world.dataset}/{world.model_name}'
+        gram_matrix_path = save_path + '/gram_matrix.pkl'
+        gram_matrix = torch.zeros((self.num_items, self.num_items)).float()
+        for i in range(self.num_items):
+            for j in range(self.num_items):
+                gram_matrix[i, j] = F.normalize(self.items[i]) @ F.normalize(self.items[j])
+        
+        #取前500和后500
+        gram_matrix_neg = gram_matrix * -1
+        indices = torch.topk(gram_matrix, 500, dim=1).indices
+        indices_neg = torch.topk(gram_matrix_neg, 500, dim=1).indices
+
+        gram_matrix_topk = torch.zeros_like(gram_matrix)  # 创建一个与原 Tensor 形状相同的零 Tensor  
+        gram_matrix_topk.scatter_(1, indices, gram_matrix.gather(1, indices))  # 使用索引将原 Tensor 中最大的前 100 项的值复制到topk Tensor 中
+        gram_matrix_neg_topk = torch.zeros_like(gram_matrix)  # 创建一个与原 Tensor 形状相同的零 Tensor  
+        gram_matrix_neg_topk.scatter_(1, indices_neg, gram_matrix_neg.gather(1, indices_neg))  # 使用索引将原 Tensor 中最大的前 100 项的值复制到topk Tensor 中
+        # 现在 gram_matrix_sum 就是我们想要的结果
+        gram_matrix_sum = gram_matrix_topk - gram_matrix_neg_topk
+        gram_matrix = sp.csr_matrix(gram_matrix_sum.numpy(), shape=(self.num_items, self.num_items))
+
+        joblib.dump(gram_matrix, gram_matrix_path, compress=3)
+        joblib.dump(gram_matrix, f'{gram_matrix_path}_{epoch_num}', compress=3)
+        self.gram_matrix = gram_matrix

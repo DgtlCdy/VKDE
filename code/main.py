@@ -93,6 +93,7 @@ if __name__ == '__main__':
                     utils.write_log(f'end train in epoch-{epoch}') # testonly
                     elapsed_time = time.time() - t0
                     if (epoch % 50 == 0) or (epoch == world.TRAIN_epochs - 1):
+                        Recmodel.update_gram_matrix(epoch) # 将自身embedding作用于相似矩阵
                         cprint("[TEST]")
                         utils.write_log(f'start Test in epoch-{epoch}') # testonly
                         results = Procedure.Test(dataset, Recmodel, epoch, w, world.config['multicore'])
