@@ -869,20 +869,24 @@ class VKDE(BasicModel):
             # 再求二阶相似度
             item_embedding_r2 = gram_matrix_r1 @ torch.Tensor(adj_mat.toarray()).T
             gram_matrix_r2 = item_embedding_r2 @ item_embedding_r2.T
-            gram_matrix = gram_matrix_r2
+            gram_matrix_r2 = gram_matrix_r2 / gram_matrix_r2.mean() * gram_matrix_r1.mean()
+
+            # 聚合
+            gram_matrix_r12 = gram_matrix_r1 * 0.8 + gram_matrix_r2 * 0.2
 
             # 把相似度拆分为正相似和负相似，取前500和后500
             gram_matrix_neg = gram_matrix * -1
-            indices = torch.topk(gram_matrix, 500, dim=1).indices
-            indices_neg = torch.topk(gram_matrix_neg, 500, dim=1).indices
+            indices = torch.topk(gram_matrix, 1000, dim=1).indices
+            indices_neg = torch.topk(gram_matrix_neg, 1000, dim=1).indices
 
             gram_matrix_topk = torch.zeros_like(gram_matrix)  # 创建一个与原 Tensor 形状相同的零 Tensor  
             gram_matrix_topk.scatter_(1, indices, gram_matrix.gather(1, indices))  # 使用索引将原 Tensor 中最大的前k项的值复制到topk Tensor 中
             gram_matrix_neg_topk = torch.zeros_like(gram_matrix)  # 创建一个与原 Tensor 形状相同的零 Tensor  
             gram_matrix_neg_topk.scatter_(1, indices_neg, gram_matrix_neg.gather(1, indices_neg))  # 使用索引将原 Tensor 中最大的前 100 项的值复制到topk Tensor 中
             # 现在 gram_matrix_sum 就是我们想要的结果
-            gram_matrix_sum = gram_matrix_topk - gram_matrix_neg_topk
-            gram_matrix_sum = sp.csr_matrix(gram_matrix_sum.numpy(), shape=(self.num_items, self.num_items))
+            # gram_matrix_sum = gram_matrix_topk - gram_matrix_neg_topk
+            # gram_matrix_sum = sp.csr_matrix(gram_matrix_sum.numpy(), shape=(self.num_items, self.num_items))
+            gram_matrix_sum = sp.csr_matrix(gram_matrix_r12.numpy(), shape=(self.num_items, self.num_items))
 
             # self.gram_matrix = gram_matrix_sum
             self.indices_neg = indices_neg
