@@ -300,20 +300,21 @@ class VKDE(BasicModel):
         #     ones = torch.ones(rating_matrix_batch.shape[1]).to(world.device)
         zeros = torch.zeros(rating_matrix_batch.shape[1]).to(world.device)
         ones = torch.ones(rating_matrix_batch.shape[1]).to(world.device)
-        # batch_input01 = torch.where(batch_input0>0, ones, zeros) # 标注batch_input0信息，batch_input0中大于0的就是1，其它的就是0
+        batch_input01 = torch.where(batch_input0>0, ones, zeros) # 标注batch_input0信息，batch_input0中大于0的就是1，其它的就是0
 
         # 引入负面消息,与batch_input01拼接
-        batch_input_neg = torch.zeros_like(batch_input0).int()
-        indices_neg_sample = np.random.choice(range(500), 32, replace=False)
-        batch_input_neg[:, indices_neg_sample] = 1
+        # batch_input_neg = torch.zeros_like(batch_input0).int()
+        # 测试的时候就不随机取兴趣，只取最不像的
+        # 测试的时候不提取，负面只在训练时优化参数
+        # indices_neg_sample = np.random.choice(range(500), 16, replace=False)
+        # batch_input_neg[:, indices_neg_sample] = 1
         # batch_input_neg = torch.zeros_like(batch_input0).int()
         # for user_neg in batch_input_neg:
-        #     indices_neg_sample = np.random.choice(range(500), 32, replace=False)
+        #     indices_neg_sample = np.random.choice(range(500), 16, replace=False)
         #     user_neg[indices_neg_sample] = 1
-        
         # batch_input01 = torch.where(batch_input0>0 or batch_input_neg>0, ones, zeros)
-        batch_input01 = torch.where(batch_input0>0, ones, zeros)
-        batch_input01 = batch_input01 + batch_input_neg
+        # batch_input01 = torch.where(batch_input0>0, ones, zeros)
+        # batch_input01 = batch_input01 + batch_input_neg
 
         batch_input_arr = []   #record multiple local interactions
         batch_input_num = []   #record number
@@ -598,10 +599,10 @@ class VKDE(BasicModel):
         
         # 引入负面消息,与batch_input01拼接
         batch_input_neg = torch.zeros_like(batch_input0).int()
-        indices_neg_sample = np.random.choice(range(500), 32, replace=False)
-        batch_input_neg[:, indices_neg_sample] = 1
-        # for user_neg in batch_input_neg:
-        #     batch_input_neg[:, indices_neg_sample] = 1
+        indices_neg_sample_idx = np.random.choice(range(500), 16, replace=False)
+        for (item_idx, user_neg) in zip(rating_matrix_batch2, batch_input_neg):
+            indices_neg_sample = self.indices_neg[item_idx, indices_neg_sample_idx]
+            user_neg[indices_neg_sample] = 1
 
         # batch_input01 = torch.where(batch_input0>0 or batch_input_neg>0, ones, zeros)
         batch_input01 = torch.where(batch_input0>0, ones, zeros)
@@ -909,16 +910,9 @@ class VKDE(BasicModel):
         utils.write_log(f'Start of update_gram_matrix in epoch-{epoch_num}.') # testonly
 
         # 获得正则化后的相似度，取值范围-1到1
-        save_path = f'./pretrained/{world.dataset}/{world.model_name}'
-        gram_matrix_path = save_path + '/gram_matrix.pkl'
-        
-        # if epoch_num > 40:
-        if True:
-            items_norm = F.normalize(self.items).detach().cpu()
-            gram_matrix = items_norm @ items_norm.T
-        else:
-            # 比较早的时候不做处理，保持原状
-            gram_matrix = torch.Tensor(self.gram_matrix.toarray())
+        items_norm = F.normalize(self.items).detach().cpu()
+        gram_matrix = items_norm @ items_norm.T
+        gram_matrix = gram_matrix * 0.1 + torch.Tensor(self.gram_matrix.toarray()) * 0.9
 
         #取前500和后500
         gram_matrix_neg = gram_matrix * -1
@@ -933,13 +927,7 @@ class VKDE(BasicModel):
         utils.write_log(f'End of get gram_matrix_neg_topk in epoch-{epoch_num}.') # testonly
         gram_matrix_sum = gram_matrix_topk - gram_matrix_neg_topk
         gram_matrix_sum = sp.csr_matrix(gram_matrix_sum.numpy(), shape=(self.num_items, self.num_items))
-        # gram_matrix = sp.csr_matrix(gram_matrix.numpy(), shape=(self.num_items, self.num_items))
-        # gram_matrix_neg = sp.csr_matrix(gram_matrix_neg.numpy(), shape=(self.num_items, self.num_items))
 
-        # joblib.dump(gram_matrix, grammatrix_path, compress=3, overwrite=True)
-        # joblib.dump(gram_matrix, f'{gram_matrix_path}_{epoch_num}', compress=3, overwrite=True)
-        # remain = 0.5
-        # self.gram_matrix = self.gram_matrix * remain + gram_matrix_sum * (1 - remain)
         self.gram_matrix = gram_matrix_sum
         self.indices_neg = indices_neg
         utils.write_log(f'End of update_gram_matrix in epoch-{epoch_num}.') # testonly
