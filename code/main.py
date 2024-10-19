@@ -90,9 +90,9 @@ if __name__ == '__main__':
                 # 开始训练
                 for epoch in range(world.TRAIN_epochs):
                     utils.write_log(f'start train in epoch-{epoch}') # testonly
+                    utils.write_log(f'current device: {world.device}') # testonly
                     t0 = time.time()
-                    # if epoch % 50 == 0:
-                    #     Recmodel.update_gram_matrix(epoch) # 将自身embedding作用于相似矩阵
+                    
                     if epoch % 10 == 0:
                         utils.write_log(f'update gram_matrix epoch-{epoch}') # testonly
                         Recmodel.update_gram_matrix(epoch) # 将自身embedding作用于相似矩阵
