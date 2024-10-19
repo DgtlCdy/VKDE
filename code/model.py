@@ -39,6 +39,7 @@ class BasicModel(nn.Module):
         raise NotImplementedError
     
     def update_gram_matrix(self, epoch_num):
+        utils.print_log("ERROR in calling update_gram_matrix!!!")
         raise NotImplementedError
 
 
@@ -188,7 +189,7 @@ class MultVAE(BasicModel):
         return loss_dict
 
 
-class VKDE(nn.Module):
+class VKDE(BasicModel):
     """
     Implementation of VKDE
     """
@@ -286,7 +287,7 @@ class VKDE(nn.Module):
 
     #ideology：calculate local interaction，forward learning，combine local distribution
     def forward_kernel_1226(self, rating_matrix_batch, rating_matrix_batch2=None):
-        utils.write_log(f'Start of forward_kernel_1226, Memory allocated {torch.cuda.memory_allocated(world.device)/1024**3:.2f}GB.') # testonly
+        utils.print_log(f'Start of forward_kernel_1226, Memory allocated {torch.cuda.memory_allocated(world.device)/1024**3:.2f}GB.') # testonly
         batch_input0 = F.normalize(rating_matrix_batch, p=2, dim=1)
         batch_input0 = F.dropout(batch_input0, p=self.dropout, training=self.training) # dropout会随机把一半元素置零，增加其它元素的值
 
@@ -404,7 +405,7 @@ class VKDE(nn.Module):
 
     #Sample one interest
     def forward_kernel(self, rating_matrix_batch, rating_matrix_batch2=None):
-        utils.write_log(f'Start of forward_kernel, Memory allocated {torch.cuda.memory_allocated(world.device)/1024**3:.2f}GB.') # testonly
+        utils.print_log(f'Start of forward_kernel, Memory allocated {torch.cuda.memory_allocated(world.device)/1024**3:.2f}GB.') # testonly
         batch_input0 = F.normalize(rating_matrix_batch, p=2, dim=1)
         batch_input0 = F.dropout(batch_input0, p=self.dropout, training=self.training)
 
@@ -472,7 +473,7 @@ class VKDE(nn.Module):
     #ideology：calculate local interaction，forward learning，combine local distribution
     # 使用固定数目的兴趣
     def forward_kernel_fix_sample(self, rating_matrix_batch, rating_matrix_batch2=None):
-        utils.write_log(f'Start of forward_kernel_fix_sample, Memory allocated {torch.cuda.memory_allocated(world.device)/1024**3:.2f}GB.') # testonly
+        utils.print_log(f'Start of forward_kernel_fix_sample, Memory allocated {torch.cuda.memory_allocated(world.device)/1024**3:.2f}GB.') # testonly
         batch_input0 = F.normalize(rating_matrix_batch, p=2, dim=1)
         batch_input0 = F.dropout(batch_input0, p=self.dropout, training=self.training) # dropout会随机把一半元素置零，增加其它元素的值
 
@@ -905,16 +906,16 @@ class VKDE(nn.Module):
 
 
     def update_gram_matrix(self, epoch_num):
+        utils.write_log(f'Start of update_gram_matrix in epoch-{epoch_num}.') # testonly
+
         # 获得正则化后的相似度，取值范围-1到1
         save_path = f'./pretrained/{world.dataset}/{world.model_name}'
         gram_matrix_path = save_path + '/gram_matrix.pkl'
         
-        if epoch_num > 40:
-            gram_matrix = torch.zeros((self.num_items, self.num_items)).float()
-            items_norm = F.normalize(self.items)
-            for i in range(self.num_items):
-                for j in range(self.num_items):
-                    gram_matrix[i, j] = items_norm[i] @ items_norm[j]
+        # if epoch_num > 40:
+        if True:
+            items_norm = F.normalize(self.items).detach().cpu()
+            gram_matrix = items_norm @ items_norm.T
         else:
             # 比较早的时候不做处理，保持原状
             gram_matrix = torch.Tensor(self.gram_matrix.toarray())
@@ -929,12 +930,16 @@ class VKDE(nn.Module):
         gram_matrix_neg_topk = torch.zeros_like(gram_matrix)  # 创建一个与原 Tensor 形状相同的零 Tensor  
         gram_matrix_neg_topk.scatter_(1, indices_neg, gram_matrix_neg.gather(1, indices_neg))  # 使用索引将原 Tensor 中最大的前 100 项的值复制到topk Tensor 中
         # 现在 gram_matrix_sum 就是我们想要的结果
+        utils.write_log(f'End of get gram_matrix_neg_topk in epoch-{epoch_num}.') # testonly
         gram_matrix_sum = gram_matrix_topk - gram_matrix_neg_topk
         gram_matrix_sum = sp.csr_matrix(gram_matrix_sum.numpy(), shape=(self.num_items, self.num_items))
         # gram_matrix = sp.csr_matrix(gram_matrix.numpy(), shape=(self.num_items, self.num_items))
         # gram_matrix_neg = sp.csr_matrix(gram_matrix_neg.numpy(), shape=(self.num_items, self.num_items))
 
-        # joblib.dump(gram_matrix, gram_matrix_path, compress=3, overwrite=True)
+        # joblib.dump(gram_matrix, grammatrix_path, compress=3, overwrite=True)
         # joblib.dump(gram_matrix, f'{gram_matrix_path}_{epoch_num}', compress=3, overwrite=True)
+        # remain = 0.5
+        # self.gram_matrix = self.gram_matrix * remain + gram_matrix_sum * (1 - remain)
         self.gram_matrix = gram_matrix_sum
         self.indices_neg = indices_neg
+        utils.write_log(f'End of update_gram_matrix in epoch-{epoch_num}.') # testonly
