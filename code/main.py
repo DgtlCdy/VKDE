@@ -93,10 +93,10 @@ if __name__ == '__main__':
                     utils.write_log(f'current device: {world.device}') # testonly
                     t0 = time.time()
                     
-                    if epoch % 10 == 0:
-                        utils.write_log(f'update gram_matrix epoch-{epoch}') # testonly
-                        Recmodel.update_gram_matrix(epoch) # 将自身embedding作用于相似矩阵
-                        utils.write_log(f'end gram_matrix epoch-{epoch}') # testonly
+                    # if epoch % 10 == 0:
+                        # utils.write_log(f'update gram_matrix epoch-{epoch}') # testonly
+                        # Recmodel.update_gram_matrix(epoch) # 将自身embedding作用于相似矩阵
+                        # utils.write_log(f'end gram_matrix epoch-{epoch}') # testonly
                     batch_loss: dict = Recmodel.train_one_epoch()
                     utils.write_log(f'end train in epoch-{epoch}') # testonly
 
