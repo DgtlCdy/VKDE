@@ -791,9 +791,9 @@ class VKDE(BasicModel):
             rating_matrix_batch2 = rating_matrix_batch2.flatten()
             rating_matrix_batch2 = torch.LongTensor(rating_matrix_batch2).cpu()
 
-            _, predict_out, kl, _ = self.forward_kernel(rating_matrix_batch, rating_matrix_batch2)
+            # _, predict_out, kl, _ = self.forward_kernel(rating_matrix_batch, rating_matrix_batch2)
             # _, predict_out, kl, _ = self.forward_kernel_bpr(rating_matrix_batch, rating_matrix_batch2)
-            # _, predict_out, kl, _ = self.forward_kernel_1226(rating_matrix_batch)
+            _, predict_out, kl, _ = self.forward_kernel_1226(rating_matrix_batch)
             # _, predict_out, kl, _ = self.forward_kernel_fix_sample(rating_matrix_batch)
 
             neg_ll, log_likelihood_O, log_likelihood_I = self.calculate_mult_log_likelihood_simple(predict_out, rating_matrix_batch)  #self.PRINT 传递epoch信息
@@ -832,10 +832,10 @@ class VKDE(BasicModel):
         ii_sim_mat_path = save_path + '/ii_sim_mat_'+ str(self.topk) +'.pkl'
         ii_sim_idx_mat_path = save_path + '/ii_sim_idx_mat_'+ str(self.topk) +'.pkl'
         gram_matrix_path = save_path + '/gram_matrix.pkl'
-        # if not os.path.exists(gram_matrix_path):
-        #     if not os.path.exists(save_path):
-        #         os.makedirs(save_path)
-        if True:
+        if not os.path.exists(gram_matrix_path):
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
+        # if True:
             adj_mat = self.dataset.UserItemNet
             row_sum = np.array(adj_mat.sum(axis=1))
             d_inv = np.power(row_sum, -0.5).flatten() #根号度分之一
@@ -869,10 +869,12 @@ class VKDE(BasicModel):
             # 再求二阶相似度
             item_embedding_r2 = gram_matrix_r1 @ torch.Tensor(adj_mat.toarray()).T
             gram_matrix_r2 = item_embedding_r2 @ item_embedding_r2.T
+            gram_matrix_r2 =  F.normalize(gram_matrix_r2)
             gram_matrix_r2 = gram_matrix_r2 / gram_matrix_r2.mean() * gram_matrix_r1.mean()
 
             # 聚合
-            gram_matrix_r12 = gram_matrix_r1 * 0.8 + gram_matrix_r2 * 0.2
+            gram_matrix = gram_matrix_r1 * 1 + gram_matrix_r2 * 0
+            # gram_matrix = gram_matrix_r2
 
             # 把相似度拆分为正相似和负相似，取前500和后500
             gram_matrix_neg = gram_matrix * -1
@@ -886,15 +888,15 @@ class VKDE(BasicModel):
             # 现在 gram_matrix_sum 就是我们想要的结果
             # gram_matrix_sum = gram_matrix_topk - gram_matrix_neg_topk
             # gram_matrix_sum = sp.csr_matrix(gram_matrix_sum.numpy(), shape=(self.num_items, self.num_items))
-            gram_matrix_sum = sp.csr_matrix(gram_matrix_r12.numpy(), shape=(self.num_items, self.num_items))
+            gram_matrix = sp.csr_matrix(gram_matrix.numpy(), shape=(self.num_items, self.num_items))
 
             # self.gram_matrix = gram_matrix_sum
             self.indices_neg = indices_neg
 
-            # joblib.dump(gram_matrix, gram_matrix_path, compress=3)
-            # joblib.dump(gram_matrix, f'{gram_matrix_path}_0', compress=3)
-            # joblib.dump(ii_sim_mat, ii_sim_mat_path, compress=3)
-            # joblib.dump(ii_sim_idx_mat, ii_sim_idx_mat_path, compress=3)
+            joblib.dump(gram_matrix, gram_matrix_path, compress=3)
+            joblib.dump(gram_matrix, f'{gram_matrix_path}_0', compress=3)
+            joblib.dump(ii_sim_mat, ii_sim_mat_path, compress=3)
+            joblib.dump(ii_sim_idx_mat, ii_sim_idx_mat_path, compress=3)
         else:
             utils.write_log(f'load existed matrix') # testonly
             gram_matrix = joblib.load(gram_matrix_path)
