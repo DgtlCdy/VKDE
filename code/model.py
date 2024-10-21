@@ -76,9 +76,9 @@ class MultVAE(BasicModel):
         self.encoder = nn.Sequential()
         for i, (in_dim, out_dim) in enumerate(zip(enc_dims[:-1], enc_dims[1:])):
             if i == len(enc_dims) - 2:
-                out_dim = out_dim * 2
+                # out_dim = out_dim * 2
                 # 权重参数：对每一个维度加一个权重
-                # out_dim = out_dim * 2 + 1
+                out_dim = out_dim * 2
             self.encoder.add_module(name='Encoder_Linear_%s'%i, module=nn.Linear(in_dim, out_dim))
             if i != len(enc_dims) - 2:
                 self.encoder.add_module(name='Encoder_Activation_%s'%i, module=self.act)
@@ -239,8 +239,8 @@ class VKDE(BasicModel):
         for i, (in_dim, out_dim) in enumerate(zip(enc_dims[:-1], enc_dims[1:])):
             # 在倒数第二层分裂开，一半均值，一半方差
             if i == len(enc_dims) - 2:
-                out_dim = out_dim * 2
-                # out_dim = out_dim * 2 + 1
+                # out_dim = out_dim * 2
+                out_dim = out_dim * 2 + 1
             self.encoder.add_module(name='Encoder_Linear_%s'%i, module=nn.Linear(in_dim, out_dim))
             if i != len(enc_dims) - 2:
                 self.encoder.add_module(name='Encoder_Activation_%s'%i, module=self.act)
@@ -342,9 +342,15 @@ class VKDE(BasicModel):
 
         #encoder and decoder
         x = self.encoder(batch_input0)
-        mean, logvar = x[:, :(len(x[0])//2)], x[:, (len(x[0])//2):]  # dengchao：这里尝试加权重？
+        # mean, logvar = x[:, :(len(x[0])//2)], x[:, (len(x[0])//2):]  # dengchao：这里尝试加权重
+        mean, logvar = x[:, :(len(x[0] - 1)//2)], x[:, (len(x[0] - 1)//2):-1]
         stddev = torch.exp(0.5 * logvar)
         epsilon = torch.randn_like(stddev)
+
+        mean_value = torch.mean(torch.relu(x[:, -1]))
+        numda = torch.relu(x[:, -1]) / mean_value
+        numda_expand = numda.unsqueeze(1).expand(x.shape[0], self.num_items) 
+
         if self.training:
             z = mean + epsilon * stddev
         else:
@@ -360,9 +366,12 @@ class VKDE(BasicModel):
         # 这里使用了内积，如果尝试用概率密度来做最大似然估计呢？
         try:
             if self.normalize:
-                out = F.normalize(z)@ (F.normalize(self.items).T)  / self.tau #- self.popularity
+                out = F.normalize(z) @ (F.normalize(self.items).T) * numda_expand / self.tau #- self.popularity
             else:
-                out = z @ self.items.T 
+                out = z @ self.items.T * numda_expand
+            # for i, out_unit, numda_unit in zip(range(out.shape[0]), out, numda):
+            #     # 原地修改会导致反向求不了梯度
+            #     out[i] = out_unit * numda_unit
         except Exception as e :
             print(e)
             print("new_input.shape:", new_input.shape)
