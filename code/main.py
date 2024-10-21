@@ -93,15 +93,15 @@ if __name__ == '__main__':
                     utils.write_log(f'current device: {world.device}') # testonly
                     t0 = time.time()
                     
-                    if epoch % 10 == 0:
-                        utils.write_log(f'update gram_matrix epoch-{epoch}') # testonly
-                        Recmodel.update_gram_matrix(epoch) # 将自身embedding作用于相似矩阵
-                        utils.write_log(f'end gram_matrix epoch-{epoch}') # testonly
+                    # if epoch % 10 == 0:
+                        # utils.write_log(f'update gram_matrix epoch-{epoch}') # testonly
+                        # Recmodel.update_gram_matrix(epoch) # 将自身embedding作用于相似矩阵
+                        # utils.write_log(f'end gram_matrix epoch-{epoch}') # testonly
                     batch_loss: dict = Recmodel.train_one_epoch()
                     utils.write_log(f'end train in epoch-{epoch}') # testonly
 
                     elapsed_time = time.time() - t0
-                    if (epoch % 25 == 0) or (epoch == world.TRAIN_epochs - 1):
+                    if (epoch % 10 == 0) or (epoch == world.TRAIN_epochs - 1):
                         cprint("[TEST]")
                         utils.write_log(f'start Test in epoch-{epoch}') # testonly
                         results = Procedure.Test(dataset, Recmodel, epoch, w, world.config['multicore'])

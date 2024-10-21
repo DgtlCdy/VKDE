@@ -792,8 +792,8 @@ class VKDE(BasicModel):
             rating_matrix_batch2 = torch.LongTensor(rating_matrix_batch2).cpu()
 
             # _, predict_out, kl, _ = self.forward_kernel(rating_matrix_batch, rating_matrix_batch2)
-            _, predict_out, kl, _ = self.forward_kernel_bpr(rating_matrix_batch, rating_matrix_batch2)
-            # _, predict_out, kl, _ = self.forward_kernel_1226(rating_matrix_batch)
+            # _, predict_out, kl, _ = self.forward_kernel_bpr(rating_matrix_batch, rating_matrix_batch2)
+            _, predict_out, kl, _ = self.forward_kernel_1226(rating_matrix_batch)
             # _, predict_out, kl, _ = self.forward_kernel_fix_sample(rating_matrix_batch)
 
             neg_ll, log_likelihood_O, log_likelihood_I = self.calculate_mult_log_likelihood_simple(predict_out, rating_matrix_batch)  #self.PRINT 传递epoch信息
@@ -835,6 +835,7 @@ class VKDE(BasicModel):
         if not os.path.exists(gram_matrix_path):
             if not os.path.exists(save_path):
                 os.makedirs(save_path)
+        # if True:
             adj_mat = self.dataset.UserItemNet
             row_sum = np.array(adj_mat.sum(axis=1))
             d_inv = np.power(row_sum, -0.5).flatten() #根号度分之一
@@ -861,23 +862,36 @@ class VKDE(BasicModel):
                 ii_sim_idx_mat[iid] = idx
                 if iid % 10000 == 0:
                     print(f'Getting {format(iid)} items topk done')
-
             ii_sim_idx_mat = ii_sim_idx_mat.numpy()
 
-            # 把gram_matrix转化为top100的行稀疏矩阵
-            gram_matrix = torch.Tensor(gram_matrix)
-            indices = torch.topk(gram_matrix, 1000, dim=1).indices
-            gram_matrix_topk = torch.zeros_like(gram_matrix)  # 创建一个与原 Tensor 形状相同的零 Tensor  
-            gram_matrix_topk.scatter_(1, indices, gram_matrix.gather(1, indices))  # 使用索引将原 Tensor 中最大的前 100 项的值复制到topk Tensor 中
-            # print(gram_matrix_topk) # 现在 gram_matrix_topk 就是我们想要的结果
-            gram_matrix = sp.csr_matrix(gram_matrix_topk.numpy(), shape=(self.num_items, self.num_items)) # 本地测试已通过，可以整体调一下
 
-            # gram_matrix_csr = gram_matrix
-            # gram_matrix_coo = gram_matrix_csr.tocoo()
-            # indices = torch.from_numpy(np.vstack((gram_matrix_coo.row, gram_matrix_coo.col)).astype(np.int64))  
-            # values = torch.from_numpy(gram_matrix_coo.data.astype(np.float32))
-            # sparse_tensor = torch.sparse_coo_tensor(indices, values, (gram_matrix_csr.shape[0], gram_matrix_csr.shape[1]))
-            # gram_matrix = sparse_tensor.to(world.device)
+            gram_matrix_r1 = torch.Tensor(gram_matrix)
+            # 再求二阶相似度
+            item_embedding_r2 = gram_matrix_r1 @ torch.Tensor(adj_mat.toarray()).T
+            gram_matrix_r2 = item_embedding_r2 @ item_embedding_r2.T
+            gram_matrix_r2 =  F.normalize(gram_matrix_r2)
+            gram_matrix_r2 = gram_matrix_r2 / gram_matrix_r2.mean() * gram_matrix_r1.mean()
+
+            # 聚合
+            gram_matrix = gram_matrix_r1 * 1 + gram_matrix_r2 * 0
+            # gram_matrix = gram_matrix_r2
+
+            # 把相似度拆分为正相似和负相似，取前500和后500
+            gram_matrix_neg = gram_matrix * -1
+            indices = torch.topk(gram_matrix, 1000, dim=1).indices
+            indices_neg = torch.topk(gram_matrix_neg, 1000, dim=1).indices
+
+            gram_matrix_topk = torch.zeros_like(gram_matrix)  # 创建一个与原 Tensor 形状相同的零 Tensor  
+            gram_matrix_topk.scatter_(1, indices, gram_matrix.gather(1, indices))  # 使用索引将原 Tensor 中最大的前k项的值复制到topk Tensor 中
+            gram_matrix_neg_topk = torch.zeros_like(gram_matrix)  # 创建一个与原 Tensor 形状相同的零 Tensor  
+            gram_matrix_neg_topk.scatter_(1, indices_neg, gram_matrix_neg.gather(1, indices_neg))  # 使用索引将原 Tensor 中最大的前 100 项的值复制到topk Tensor 中
+            # 现在 gram_matrix_sum 就是我们想要的结果
+            # gram_matrix_sum = gram_matrix_topk - gram_matrix_neg_topk
+            # gram_matrix_sum = sp.csr_matrix(gram_matrix_sum.numpy(), shape=(self.num_items, self.num_items))
+            gram_matrix = sp.csr_matrix(gram_matrix.numpy(), shape=(self.num_items, self.num_items))
+
+            # self.gram_matrix = gram_matrix_sum
+            self.indices_neg = indices_neg
 
             joblib.dump(gram_matrix, gram_matrix_path, compress=3)
             joblib.dump(gram_matrix, f'{gram_matrix_path}_0', compress=3)
